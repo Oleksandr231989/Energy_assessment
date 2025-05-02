@@ -356,7 +356,6 @@
             }
         }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.38.4/dist/umd/supabase.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
 </head>
@@ -719,11 +718,6 @@
         document.addEventListener('DOMContentLoaded', () => {
             // Register the datalabels plugin
             Chart.register(ChartDataLabels);
-
-            // REMOVED: Supabase client initialization with API keys
-            // const supabaseUrl = 'https://tqwxctaahwgvnbevmwkl.supabase.co';
-            // const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRxd3hjdGFhaHdndm5iZXZtd2tsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU4MjgzMzEsImV4cCI6MjA2MTQwNDMzMX0.8J12VqGWEhBRIwYLUDqgvh4F2Dz1skOPU9Kmbmp-C_U';
-            // const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
             
             const categories = ['physical', 'emotional', 'mental', 'spiritual'];
             const categoryInfo = {
@@ -949,7 +943,6 @@
                 toggleView(getElement('results-view'), true);
             };
             
-            // UPDATED: Function to fetch previous results
             const fetchPreviousResults = async (email, currentId) => {
               try {
                 let url = `/api/get-previous-results?email=${encodeURIComponent(email)}`;
@@ -957,13 +950,19 @@
                   url += `&currentId=${encodeURIComponent(currentId)}`;
                 }
                 
+                console.log("Fetching previous results from:", url);
+                
                 const response = await fetch(url);
+                console.log("Response status:", response.status);
                 
                 if (!response.ok) {
+                  const errorText = await response.text();
+                  console.error("Error response:", errorText);
                   throw new Error('Failed to fetch previous results');
                 }
                 
                 const data = await response.json();
+                console.log("Received previous results:", data);
                 
                 if (data && data.length > 0) {
                   return data.map(entry => {
@@ -1006,7 +1005,6 @@
               }
             };
             
-            // UPDATED: Function to save answers to Supabase
             const saveAnswersToSupabase = async (nickname, email, event, showOnGraph, answers) => {
               try {
                 console.log("Saving answers to API...");
@@ -1036,7 +1034,11 @@
                   body: JSON.stringify(userData)
                 });
                 
+                console.log("Response status:", response.status);
+                
                 if (!response.ok) {
+                  const errorText = await response.text();
+                  console.error("Error response:", errorText);
                   throw new Error('Failed to save assessment');
                 }
                 
