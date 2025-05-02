@@ -720,9 +720,10 @@
             // Register the datalabels plugin
             Chart.register(ChartDataLabels);
 
-            const supabaseUrl = 'https://tqwxctaahwgvnbevmwkl.supabase.co';
-            const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRxd3hjdGFhaHdndm5iZXZtd2tsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU4MjgzMzEsImV4cCI6MjA2MTQwNDMzMX0.8J12VqGWEhBRIwYLUDqgvh4F2Dz1skOPU9Kmbmp-C_U';
-            const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+            // REMOVED: Supabase client initialization with API keys
+            // const supabaseUrl = 'https://tqwxctaahwgvnbevmwkl.supabase.co';
+            // const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRxd3hjdGFhaHdndm5iZXZtd2tsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU4MjgzMzEsImV4cCI6MjA2MTQwNDMzMX0.8J12VqGWEhBRIwYLUDqgvh4F2Dz1skOPU9Kmbmp-C_U';
+            // const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
             
             const categories = ['physical', 'emotional', 'mental', 'spiritual'];
             const categoryInfo = {
@@ -948,105 +949,105 @@
                 toggleView(getElement('results-view'), true);
             };
             
+            // UPDATED: Function to fetch previous results
             const fetchPreviousResults = async (email, currentId) => {
-                try {
-                    const { data, error } = await supabase
-                        .from('user_answers')
-                        .select('id, created_at, answer_1, answer_2, answer_3, answer_4, answer_5, answer_6, answer_7, answer_8, answer_9, answer_10, answer_11, answer_12, answer_13, answer_14, answer_15, answer_16, answer_17, answer_18, answer_19, answer_20')
-                        .eq('email', email)
-                        .neq('id', currentId)
-                        .order('created_at', { ascending: true });
-
-                    if (error) {
-                        console.error('Error fetching previous results:', error);
-                        return [];
-                    }
-
-                    if (data && data.length > 0) {
-                        return data.map(entry => {
-                            const scores = { physical: 0, emotional: 0, mental: 0, spiritual: 0, total: 0 };
-                            for (let i = 1; i <= 5; i++) {
-                                const answer = entry[`answer_${i}`];
-                                if (answer !== null && answer !== undefined) {
-                                    scores.physical += parseInt(answer);
-                                    scores.total += parseInt(answer);
-                                }
-                            }
-                            for (let i = 6; i <= 10; i++) {
-                                const answer = entry[`answer_${i}`];
-                                if (answer !== null && answer !== undefined) {
-                                    scores.emotional += parseInt(answer);
-                                    scores.total += parseInt(answer);
-                                }
-                            }
-                            for (let i = 11; i <= 15; i++) {
-                                const answer = entry[`answer_${i}`];
-                                if (answer !== null && answer !== undefined) {
-                                    scores.mental += parseInt(answer);
-                                    scores.total += parseInt(answer);
-                                }
-                            }
-                            for (let i = 16; i <= 20; i++) {
-                                const answer = entry[`answer_${i}`];
-                                if (answer !== null && answer !== undefined) {
-                                    scores.spiritual += parseInt(answer);
-                                    scores.total += parseInt(answer);
-                                }
-                            }
-                            return { scores, created_at: entry.created_at };
-                        });
-                    }
-                    return [];
-                } catch (error) {
-                    console.error('Error:', error);
-                    return [];
+              try {
+                let url = `/api/get-previous-results?email=${encodeURIComponent(email)}`;
+                if (currentId) {
+                  url += `&currentId=${encodeURIComponent(currentId)}`;
                 }
+                
+                const response = await fetch(url);
+                
+                if (!response.ok) {
+                  throw new Error('Failed to fetch previous results');
+                }
+                
+                const data = await response.json();
+                
+                if (data && data.length > 0) {
+                  return data.map(entry => {
+                    const scores = { physical: 0, emotional: 0, mental: 0, spiritual: 0, total: 0 };
+                    for (let i = 1; i <= 5; i++) {
+                      const answer = entry[`answer_${i}`];
+                      if (answer !== null && answer !== undefined) {
+                        scores.physical += parseInt(answer);
+                        scores.total += parseInt(answer);
+                      }
+                    }
+                    for (let i = 6; i <= 10; i++) {
+                      const answer = entry[`answer_${i}`];
+                      if (answer !== null && answer !== undefined) {
+                        scores.emotional += parseInt(answer);
+                        scores.total += parseInt(answer);
+                      }
+                    }
+                    for (let i = 11; i <= 15; i++) {
+                      const answer = entry[`answer_${i}`];
+                      if (answer !== null && answer !== undefined) {
+                        scores.mental += parseInt(answer);
+                        scores.total += parseInt(answer);
+                      }
+                    }
+                    for (let i = 16; i <= 20; i++) {
+                      const answer = entry[`answer_${i}`];
+                      if (answer !== null && answer !== undefined) {
+                        scores.spiritual += parseInt(answer);
+                        scores.total += parseInt(answer);
+                      }
+                    }
+                    return { scores, created_at: entry.created_at };
+                  });
+                }
+                return [];
+              } catch (error) {
+                console.error('Error fetching previous results:', error);
+                return [];
+              }
             };
             
+            // UPDATED: Function to save answers to Supabase
             const saveAnswersToSupabase = async (nickname, email, event, showOnGraph, answers) => {
-                try {
-                    console.log("Saving answers to Supabase...");
-                    console.log("Nickname:", nickname);
-                    console.log("Email:", email);
-                    console.log("Event:", event);
-                    console.log("Show on graph:", showOnGraph);
-                    console.log("Answers:", answers);
-                    
-                    const userData = {
-                        nickname,
-                        email,
-                        event,
-                        show_on_graph: showOnGraph
-                    };
-                    
-                    let answerCounter = 1;
-                    for (const category of categories) {
-                        for (let i = 1; i <= 5; i++) {
-                            userData[`answer_${answerCounter}`] = answers[`${category}_${i}`];
-                            answerCounter++;
-                        }
-                    }
-                    
-                    console.log("Formatted user data:", userData);
-                    
-                    const { data, error } = await supabase
-                        .from('user_answers')
-                        .insert([userData])
-                        .select('id, created_at')
-                        .single();
-                    
-                    if (error) {
-                        console.error("Supabase error:", error);
-                        throw error;
-                    }
-                    
-                    console.log("Data saved successfully:", data);
-                    currentAssessmentId = data.id;
-                    return { success: true, data };
-                } catch (error) {
-                    console.error('Error saving answers:', error);
-                    return { success: false, error: error.message };
+              try {
+                console.log("Saving answers to API...");
+                
+                const userData = {
+                  nickname,
+                  email,
+                  event,
+                  show_on_graph: showOnGraph
+                };
+                
+                let answerCounter = 1;
+                for (const category of categories) {
+                  for (let i = 1; i <= 5; i++) {
+                    userData[`answer_${answerCounter}`] = answers[`${category}_${i}`];
+                    answerCounter++;
+                  }
                 }
+                
+                console.log("Formatted user data:", userData);
+                
+                const response = await fetch('/api/save-assessment', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify(userData)
+                });
+                
+                if (!response.ok) {
+                  throw new Error('Failed to save assessment');
+                }
+                
+                const data = await response.json();
+                console.log("Data saved successfully:", data);
+                currentAssessmentId = data.id;
+                return { success: true, data };
+              } catch (error) {
+                console.error('Error saving answers:', error);
+                return { success: false, error: error.message };
+              }
             };
             
             getElement('registration-form').addEventListener('submit', e => {
