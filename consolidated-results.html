@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consolidated Energy Level Results</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #4338ca;
+            --secondary: #06b6d4;
+            --light: #f3f4f6;
+            --dark: #1f2937;
+            --positive: #16a34a;
+            --negative: #dc2626;
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        body {
+            background: #f9fafb;
+            color: var(--dark);
+            line-height: 1.6;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .container {
+            max-width: 800px;
+            width: 90%;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: #fff;
+            border-radius: 8px;
+        }
+        h1, h2, h3 {
+            margin-bottom: 1rem;
+        }
+        .card {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .results-bars {
+            margin-top: 1rem;
+        }
+        .bar-container {
+            margin-bottom: 1rem;
+        }
+        .bar-label {
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+        .bar {
+            height: 20px;
+            background-color: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .bar-fill {
+            height: 100%;
+            transition: width 0.5s ease;
+        }
+        .bar-fill.physical { background-color: #e0f2fe; }
+        .bar-fill.emotional { background-color: #fef3c7; }
+        .bar-fill.mental { background-color: #dcfce7; }
+        .bar-fill.spiritual { background-color: #e0e7ff; }
+        .bar-fill.user { background-color: #c3dafe; }
+        .total-score-container {
+            margin-bottom: 1rem;
+        }
+        .combined-score-message {
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        .score-difference-positive {
+            color: var(--positive);
+            font-weight: bold;
+        }
+        .score-difference-negative {
+            color: var(--negative);
+            font-weight: bold;
+        }
+        .user-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        .user-table th, .user-table td {
+            padding: 0.75rem;
+            border-bottom: 1px solid #e5e7eb;
+            text-align: left;
+        }
+        .user-table th {
+            background-color: #f9fafb;
+            font-weight: 500;
+        }
+        .user-table .bar-container {
+            margin-bottom: 0;
+        }
+        .user-table .bar {
+            height: 16px;
+        }
+        .error-message {
+            padding: 1rem;
+            background-color: #fee2e2;
+            color: #991b1b;
+            border-radius: 4px;
+            margin-top: 1rem;
+            text-align: center;
+        }
+        .filter-container {
+            margin-bottom: 1rem;
+        }
+        .filter-container label {
+            margin-right: 0.5rem;
+            font-weight: 500;
+        }
+        .filter-container select {
+            padding: 0.5rem;
+            border-radius: 4px;
+            border: 1px solid #e5e7eb;
+        }
+        .slider-container {
+            margin-bottom: 1rem;
+        }
+        .slider-container label {
+            margin-right: 0.5rem;
+            font-weight: 500;
+        }
+        .slider-container input[type="range"] {
+            width: 100%;
+            margin-top: 0.5rem;
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 0.5rem;
+                width: 95%;
+            }
+            header {
+                margin-bottom: 1rem;
+                padding: 0.75rem;
+            }
+            h1 {
+                font-size: 1.5rem;
+            }
+            h2 {
+                font-size: 1.25rem;
+            }
+            .card {
+                padding: 1rem;
+                margin-bottom: 1rem;
+            }
+            .bar {
+                height: 16px;
+            }
+            .bar-label {
+                font-size: 0.85rem;
+            }
+            .combined-score-message {
+                font-size: 1.1rem;
+            }
+            .user-table th, .user-table td {
+                padding: 0.5rem;
+                font-size: 0.85rem;
+            }
+            .user-table .bar {
+                height: 12px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            h1 {
+                font-size: 1.3rem;
+            }
+            h2 {
+                font-size: 1.1rem;
+            }
+            .card {
+                padding: 0.75rem;
+            }
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.38.4/dist/umd/supabase.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Energy Level Assessment</h1>
+            <p>Evaluate your energy levels across multiple dimensions</p>
+        </header>
+        <div class="filter-container">
+            <label for="event-filter">Event:</label>
+            <select id="event-filter">
+                <option value="">All Events</option>
+            </select>
+        </div>
+        <div class="card">
+            <h2 id="consolidated-results-title">Consolidated Results</h2>
+            <div class="total-score-container">
+                <div class="combined-score-message" id="combined-score-message">We are</div>
+            </div>
+            <div class="results-bars">
+                <div class="bar-container">
+                    <div class="bar-label">Physical (Average Score: <span id="physical-score">0</span>)</div>
+                    <div class="bar">
+                        <div class="bar-fill physical" id="physical-bar" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div class="bar-container">
+                    <div class="bar-label">Emotional (Average Score: <span id="emotional-score">0</span>)</div>
+                    <div class="bar">
+                        <div class="bar-fill emotional" id="emotional-bar" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div class="bar-container">
+                    <div class="bar-label">Mental (Average Score: <span id="mental-score">0</span>)</div>
+                    <div class="bar">
+                        <div class="bar-fill mental" id="mental-bar" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div class="bar-container">
+                    <div class="bar-label">Spiritual / Purpose / Alignment (Average Score: <span id="spiritual-score">0</span>)</div>
+                    <div class="bar">
+                        <div class="bar-fill spiritual" id="spiritual-bar" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <h2>Most Energized Users</h2>
+            <div class="slider-container">
+                <label for="user-count-slider">Number of users to show: <span id="slider-value">10</span></label>
+                <input type="range" id="user-count-slider" min="1" max="10" value="10">
+            </div>
+            <p>Users with the highest scores who agreed to appear on the group graph.</p>
+            <table class="user-table" id="user-table">
+                <thead>
+                    <tr>
+                        <th>Nickname</th>
+                        <th>Score (out of 20)</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <div id="error-message" class="error-message" style="display: none;"></div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const supabaseUrl = 'https://tqwxctaahwgvnbevmwkl.supabase.co';
+            const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRxd3hjdGFhaHdndm5iZXZtd2tsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU4MjgzMzEsImV4cCI6MjA2MTQwNDMzMX0.8J12VqGWEhBRIwYLUDqgvh4F2Dz1skOPU9Kmbmp-C_U';
+            const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+            const getElement = id => document.getElementById(id);
+
+            const fetchData = async () => {
+                try {
+                    const { data, error } = await supabase
+                        .from('user_answers')
+                        .select('nickname, event, show_on_graph, created_at, answer_1, answer_2, answer_3, answer_4, answer_5, answer_6, answer_7, answer_8, answer_9, answer_10, answer_11, answer_12, answer_13, answer_14, answer_15, answer_16, answer_17, answer_18, answer_19, answer_20');
+
+                    if (error) throw error;
+                    return data;
+                } catch (error) {
+                    console.error('Error fetching data:', error);
+                    getElement('error-message').textContent = `Error: ${error.message}`;
+                    getElement('error-message').style.display = 'block';
+                    return [];
+                }
+            };
+
+            const populateEventFilter = (data) => {
+                const eventFilter = getElement('event-filter');
+                const events = [...new Set(data.map(user => user.event))].filter(event => event);
+                events.forEach(event => {
+                    const option = document.createElement('option');
+                    option.value = event;
+                    option.textContent = event;
+                    eventFilter.appendChild(option);
+                });
+            };
+
+            const calculateTotalScore = (user) => {
+                return ((user.answer_1 || 0) + (user.answer_2 || 0) + (user.answer_3 || 0) + (user.answer_4 || 0) + (user.answer_5 || 0) +
+                        (user.answer_6 || 0) + (user.answer_7 || 0) + (user.answer_8 || 0) + (user.answer_9 || 0) + (user.answer_10 || 0) +
+                        (user.answer_11 || 0) + (user.answer_12 || 0) + (user.answer_13 || 0) + (user.answer_14 || 0) + (user.answer_15 || 0) +
+                        (user.answer_16 || 0) + (user.answer_17 || 0) + (user.answer_18 || 0) + (user.answer_19 || 0) + (user.answer_20 || 0));
+            };
+
+            const calculateAverages = (data) => {
+                if (!data || data.length === 0) return { physical: 0, emotional: 0, mental: 0, spiritual: 0, total: 0 };
+
+                let physicalSum = 0, emotionalSum = 0, mentalSum = 0, spiritualSum = 0, totalSum = 0;
+                const userCount = data.length;
+
+                data.forEach(user => {
+                    const physical = (user.answer_1 || 0) + (user.answer_2 || 0) + (user.answer_3 || 0) + (user.answer_4 || 0) + (user.answer_5 || 0);
+                    const emotional = (user.answer_6 || 0) + (user.answer_7 || 0) + (user.answer_8 || 0) + (user.answer_9 || 0) + (user.answer_10 || 0);
+                    const mental = (user.answer_11 || 0) + (user.answer_12 || 0) + (user.answer_13 || 0) + (user.answer_14 || 0) + (user.answer_15 || 0);
+                    const spiritual = (user.answer_16 || 0) + (user.answer_17 || 0) + (user.answer_18 || 0) + (user.answer_19 || 0) + (user.answer_20 || 0);
+
+                    physicalSum += physical;
+                    emotionalSum += emotional;
+                    mentalSum += mental;
+                    spiritualSum += spiritual;
+                    totalSum += (physical + emotional + mental + spiritual);
+                });
+
+                return {
+                    physical: (physicalSum / userCount).toFixed(1),
+                    emotional: (emotionalSum / userCount).toFixed(1),
+                    mental: (mentalSum / userCount).toFixed(1),
+                    spiritual: (spiritualSum / userCount).toFixed(1),
+                    total: (totalSum / userCount).toFixed(1),
+                    responseCount: userCount
+                };
+            };
+
+            const getStatusMessage = (totalScore) => {
+                const score = parseFloat(totalScore);
+                if (score >= 17) return "We are Fully energized";
+                if (score >= 13) return "We are Moderately energized";
+                if (score >= 9) return "We are Somewhat energized";
+                if (score >= 5) return "We are Fading";
+                return "We are Burned out";
+            };
+
+            const updateSliderMax = (maxUsers) => {
+                const slider = getElement('user-count-slider');
+                slider.max = maxUsers;
+                slider.value = Math.min(slider.value, maxUsers);
+                getElement('slider-value').textContent = slider.value;
+            };
+
+            const displayAverages = (data) => {
+                const eventFilter = getElement('event-filter').value;
+                const filteredData = eventFilter ? data.filter(user => user.event === eventFilter) : data;
+                const averages = calculateAverages(filteredData);
+
+                getElement('physical-score').textContent = averages.physical;
+                getElement('physical-bar').style.width = `${averages.physical * 20}%`;
+                getElement('emotional-score').textContent = averages.emotional;
+                getElement('emotional-bar').style.width = `${averages.emotional * 20}%`;
+                getElement('mental-score').textContent = averages.mental;
+                getElement('mental-bar').style.width = `${averages.mental * 20}%`;
+                getElement('spiritual-score').textContent = averages.spiritual;
+                getElement('spiritual-bar').style.width = `${averages.spiritual * 20}%`;
+
+                const statusMessage = getStatusMessage(averages.total);
+                const combinedMessage = `${statusMessage}. Average Total Score: ${averages.total} (out of 20)`;
+                getElement('combined-score-message').innerHTML = combinedMessage;
+
+                getElement('consolidated-results-title').textContent = `Consolidated Results - ${averages.responseCount} responses`;
+            };
+
+            const displayUserTable = (data) => {
+                const eventFilter = getElement('event-filter').value;
+                const filteredData = eventFilter ? data.filter(user => user.event === eventFilter) : data;
+                const tbody = getElement('user-table').querySelector('tbody');
+                const consentingUsers = filteredData.filter(user => user.show_on_graph);
+                const sliderValue = parseInt(getElement('user-count-slider').value);
+
+                updateSliderMax(consentingUsers.length);
+
+                tbody.innerHTML = '';
+                if (consentingUsers.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="2">No users have agreed to appear on the group graph.</td></tr>';
+                    return;
+                }
+
+                const usersWithScores = consentingUsers.map(user => ({
+                    ...user,
+                    totalScore: calculateTotalScore(user)
+                }));
+
+                const topUsers = usersWithScores
+                    .sort((a, b) => b.totalScore - a.totalScore)
+                    .slice(0, sliderValue);
+
+                topUsers.forEach(user => {
+                    const percentage = (user.totalScore / 20) * 100;
+
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${user.nickname}</td>
+                        <td>
+                            <div class="bar-container">
+                                <div class="bar">
+                                    <div class="bar-fill user" style="width: ${percentage}%"></div>
+                                </div>
+                            </div>
+                            ${user.totalScore}
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+
+                if (topUsers.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="2">No users available.</td></tr>';
+                }
+            };
+
+            const data = await fetchData();
+            populateEventFilter(data);
+            displayAverages(data);
+            displayUserTable(data);
+
+            getElement('event-filter').addEventListener('change', () => {
+                displayAverages(data);
+                displayUserTable(data);
+            });
+
+            getElement('user-count-slider').addEventListener('input', () => {
+                getElement('slider-value').textContent = getElement('user-count-slider').value;
+                displayUserTable(data);
+            });
+        });
+    </script>
+</body>
+</html>
