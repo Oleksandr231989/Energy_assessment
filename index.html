@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -945,7 +946,8 @@
             
             const fetchPreviousResults = async (email, currentId) => {
               try {
-                let url = `/api/get-previous-results?email=${encodeURIComponent(email)}`;
+                // Using absolute URL instead of relative path
+                let url = `https://energy-assessment.vercel.app/api/get-previous-results?email=${encodeURIComponent(email)}`;
                 if (currentId) {
                   url += `&currentId=${encodeURIComponent(currentId)}`;
                 }
@@ -1026,7 +1028,8 @@
                 
                 console.log("Formatted user data:", userData);
                 
-                const response = await fetch('/api/save-assessment', {
+                // Using absolute URL instead of relative path
+                const response = await fetch('https://energy-assessment.vercel.app/api/save-assessment', {
                   method: 'POST',
                   headers: {
                     'Content-Type': 'application/json',
@@ -1144,3 +1147,4 @@
     </script>
 </body>
 </html>
+```
