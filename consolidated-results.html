@@ -1,9 +1,10 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Energy Level Assessment</title>
+    <title>Consolidated Energy Level Results</title>
     <style>
         :root {
             --primary: #4f46e5;
@@ -11,8 +12,8 @@
             --secondary: #06b6d4;
             --light: #f3f4f6;
             --dark: #1f2937;
-            --positive: #16a34a; /* Green for positive difference */
-            --negative: #dc2626; /* Red for negative difference */
+            --positive: #16a34a;
+            --negative: #dc2626;
         }
         * {
             box-sizing: border-box;
@@ -50,150 +51,6 @@
             padding: 1.5rem;
             margin-bottom: 1.5rem;
         }
-        .form-group {
-            margin-bottom: 1.2rem;
-        }
-        label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-        }
-        input[type="text"], input[type="checkbox"], select {
-            padding: 0.75rem;
-            border: 1px solid #d1d5db;
-            border-radius: 4px;
-            font-size: 1rem;
-            width: 100%;
-        }
-        input[type="checkbox"] {
-            width: auto;
-            margin-right: 0.5rem;
-        }
-        .checkbox-container {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            justify-content: flex-start;
-        }
-        .checkbox-container label {
-            display: inline;
-            margin-bottom: 0;
-            font-weight: normal;
-        }
-        button {
-            background: var(--primary);
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            padding: 0.75rem 1.5rem;
-            font-size: 1rem;
-            cursor: pointer;
-            touch-action: manipulation;
-            min-width: 120px;
-            min-height: 44px;
-        }
-        button:hover {
-            background: var(--primary-dark);
-        }
-        .btn-secondary {
-            background: #e5e7eb;
-            color: var(--dark);
-        }
-        .btn-secondary:hover {
-            background: #d1d5db;
-        }
-        .question {
-            border-bottom: 1px solid #e5e7eb;
-            padding: 0.8rem 0;
-        }
-        .question:last-child {
-            border-bottom: none;
-        }
-        .question-label {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 0.5rem;
-            flex-wrap: wrap;
-        }
-        .category {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: 500;
-            margin-left: 0.5rem;
-        }
-        .category-physical { background: #e0f2fe; color: #0369a1; }
-        .category-emotional { background: #fef3c7; color: #92400e; }
-        .category-mental { background: #dcfce7; color: #166534; }
-        .category-spiritual { background: #e0e7ff; color: #4338ca; }
-        .yes-no-toggle {
-            display: flex;
-            gap: 1rem;
-        }
-        .yes-no-toggle label {
-            flex: 1;
-            text-align: center;
-            padding: 0.75rem;
-            border: 1px solid #d1d5db;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 1rem;
-            touch-action: manipulation;
-        }
-        .yes-no-toggle input {
-            display: none;
-        }
-        .yes-no-toggle input:checked + label.yes {
-            background: #dcfce7;
-            border-color: #16a34a;
-            color: #166534;
-        }
-        .yes-no-toggle input:checked + label.no {
-            background: #fee2e2;
-            border-color: #dc2626;
-            color: #991b1b;
-        }
-        .stepper {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 1.5rem;
-            gap: 1rem;
-        }
-        .view {
-            display: none;
-        }
-        .view.active {
-            display: block;
-        }
-        .progress-bar {
-            height: 8px;
-            background: #e5e7eb;
-            border-radius: 4px;
-            margin-bottom: 1.5rem;
-            overflow: hidden;
-        }
-        .progress-bar-fill {
-            height: 100%;
-            background: var(--primary);
-            transition: width 0.3s ease;
-        }
-        .success-message {
-            padding: 1rem;
-            background-color: #dcfce7;
-            color: #166534;
-            border-radius: 4px;
-            margin-top: 1rem;
-            text-align: center;
-        }
-        .error-message {
-            padding: 1rem;
-            background-color: #fee2e2;
-            color: #991b1b;
-            border-radius: 4px;
-            margin-top: 1rem;
-            text-align: center;
-        }
         .results-bars {
             margin-top: 1rem;
         }
@@ -218,10 +75,11 @@
         .bar-fill.emotional { background-color: #fef3c7; }
         .bar-fill.mental { background-color: #dcfce7; }
         .bar-fill.spiritual { background-color: #e0e7ff; }
+        .bar-fill.user { background-color: #c3dafe; }
         .total-score-container {
             margin-bottom: 1rem;
         }
-        .total-score {
+        .combined-score-message {
             font-weight: bold;
             font-size: 1.2rem;
         }
@@ -233,16 +91,56 @@
             color: var(--negative);
             font-weight: bold;
         }
-        .status-message {
-            font-size: 1.4rem; /* Slightly larger than total-score */
-            font-weight: bold;
-            margin-top: 0.5rem;
-            color: #374151;
-            text-transform: uppercase; /* Uppercase for status */
+        .user-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
         }
-        .chart-container {
-            margin-top: 2rem;
-            margin-bottom: 2rem;
+        .user-table th, .user-table td {
+            padding: 0.75rem;
+            border-bottom: 1px solid #e5e7eb;
+            text-align: left;
+        }
+        .user-table th {
+            background-color: #f9fafb;
+            font-weight: 500;
+        }
+        .user-table .bar-container {
+            margin-bottom: 0;
+        }
+        .user-table .bar {
+            height: 16px;
+        }
+        .error-message {
+            padding: 1rem;
+            background-color: #fee2e2;
+            color: #991b1b;
+            border-radius: 4px;
+            margin-top: 1rem;
+            text-align: center;
+        }
+        .filter-container {
+            margin-bottom: 1rem;
+        }
+        .filter-container label {
+            margin-right: 0.5rem;
+            font-weight: 500;
+        }
+        .filter-container select {
+            padding: 0.5rem;
+            border-radius: 4px;
+            border: 1px solid #e5e7eb;
+        }
+        .slider-container {
+            margin-bottom: 1rem;
+        }
+        .slider-container label {
+            margin-right: 0.5rem;
+            font-weight: 500;
+        }
+        .slider-container input[type="range"] {
+            width: 100%;
+            margin-top: 0.5rem;
         }
 
         @media (max-width: 640px) {
@@ -259,68 +157,9 @@
             }
             h2 {
                 font-size: 1.25rem;
-                text-align: left;
             }
             .card {
                 padding: 1rem;
-                margin-bottom: 1rem;
-            }
-            .form-group {
-                margin-bottom: 1rem;
-            }
-            input[type="text"], input[type="checkbox"], select {
-                padding: 0.5rem;
-                font-size: 0.9rem;
-            }
-            .checkbox-container {
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-                justify-content: flex-start;
-            }
-            .checkbox-container label {
-                font-size: 0.9rem;
-                display: inline;
-                margin-bottom: 0;
-                font-weight: normal;
-            }
-            input[type="checkbox"] {
-                width: auto;
-                margin-right: 0.5rem;
-            }
-            button {
-                padding: 0.75rem 1rem;
-                font-size: 0.9rem;
-                min-height: 48px;
-            }
-            .yes-no-toggle label {
-                padding: 0.6rem;
-                font-size: 0.9rem;
-                min-height: 44px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-            .question {
-                padding: 0.6rem 0;
-            }
-            .category {
-                display: none;
-            }
-            .question-label {
-                font-size: 0.9rem;
-                flex-direction: column;
-                gap: 0.25rem;
-            }
-            .stepper {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .stepper button {
-                width: 100%;
-            }
-            .progress-bar {
-                height: 6px;
                 margin-bottom: 1rem;
             }
             .bar {
@@ -329,11 +168,15 @@
             .bar-label {
                 font-size: 0.85rem;
             }
-            .total-score {
+            .combined-score-message {
                 font-size: 1.1rem;
             }
-            .status-message {
-                font-size: 1.2rem; /* Adjust for smaller screens */
+            .user-table th, .user-table td {
+                padding: 0.5rem;
+                font-size: 0.85rem;
+            }
+            .user-table .bar {
+                height: 12px;
             }
         }
 
@@ -347,17 +190,8 @@
             .card {
                 padding: 0.75rem;
             }
-            .yes-no-toggle {
-                flex-direction: column;
-                gap: 0.5rem;
-            }
-            .yes-no-toggle label {
-                width: 100%;
-            }
         }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -365,783 +199,232 @@
             <h1>Energy Level Assessment</h1>
             <p>Evaluate your energy levels across multiple dimensions</p>
         </header>
-        <div class="view active" id="registration-view">
-            <div class="card">
-                <h2>Create Account</h2>
-                <form id="registration-form">
-                    <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="text" id="email" required>
+        <div class="filter-container">
+            <label for="event-filter">Event:</label>
+            <select id="event-filter">
+                <option value="">All Events</option>
+            </select>
+        </div>
+        <div class="card">
+            <h2 id="consolidated-results-title">Consolidated Results</h2>
+            <div class="total-score-container">
+                <div class="combined-score-message" id="combined-score-message">We are</div>
+            </div>
+            <div class="results-bars">
+                <div class="bar-container">
+                    <div class="bar-label">Physical (Average Score: <span id="physical-score">0</span>)</div>
+                    <div class="bar">
+                        <div class="bar-fill physical" id="physical-bar" style="width: 0%"></div>
                     </div>
-                    <div class="form-group">
-                        <label for="nickname">Nickname</label>
-                        <input type="text" id="nickname" required>
+                </div>
+                <div class="bar-container">
+                    <div class="bar-label">Emotional (Average Score: <span id="emotional-score">0</span>)</div>
+                    <div class="bar">
+                        <div class="bar-fill emotional" id="emotional-bar" style="width: 0%"></div>
                     </div>
-                    <div class="form-group">
-                        <label for="event">Event</label>
-                        <select id="event" required>
-                            <option value="GCE 2025">GCE 2025</option>
-                            <option value="...">...</option>
-                        </select>
+                </div>
+                <div class="bar-container">
+                    <div class="bar-label">Mental (Average Score: <span id="mental-score">0</span>)</div>
+                    <div class="bar">
+                        <div class="bar-fill mental" id="mental-bar" style="width: 0%"></div>
                     </div>
-                    <div class="form-group checkbox-container">
-                        <input type="checkbox" id="consent">
-                        <label for="consent">I agree to appear with my nickname on the group graph</label>
+                </div>
+                <div class="bar-container">
+                    <div class="bar-label">Spiritual / Purpose / Alignment (Average Score: <span id="spiritual-score">0</span>)</div>
+                    <div class="bar">
+                        <div class="bar-fill spiritual" id="spiritual-bar" style="width: 0%"></div>
                     </div>
-                    <button type="submit">Create</button>
-                    <div id="reg-error" class="error-message" style="display: none;"></div>
-                </form>
+                </div>
             </div>
         </div>
-        <div class="view" id="session-view">
-            <div class="card">
-                <h2>Start Assessment</h2>
-                <form id="session-form">
-                    <div class="form-group">
-                        <label for="session-name">Session Name (Optional)</label>
-                        <input type="text" id="session-name" placeholder="e.g. GCE2025">
-                    </div>
-                    <button type="submit">Start</button>
-                </form>
+        <div class="card">
+            <h2>Most Energized Users</h2>
+            <div class="slider-container">
+                <label for="user-count-slider">Number of users to show: <span id="slider-value">10</span></label>
+                <input type="range" id="user-count-slider" min="1" max="10" value="10">
             </div>
-        </div>
-        <div class="view" id="assessment-view">
-            <div class="progress-bar">
-                <div class="progress-bar-fill" style="width:0%"></div>
-            </div>
-            <div class="card">
-                <h2 id="assessment-category-title">Physical Energy</h2>
-                <p id="assessment-category-description">Assess your physical energy level</p>
-                <form id="assessment-form">
-                    <div class="questions-section" id="physical-questions">
-                        <div class="question">
-                            <div class="question-label">
-                                <span>I get at least 7 hours of sleep.</span>
-                                <span class="category category-physical">Physical</span>
-                            </div>
-                            <div class="yes-no-toggle">
-                                <input type="radio" id="physical-1-yes" name="physical-1" value="1">
-                                <label for="physical-1-yes" class="yes">Yes</label>
-                                <input type="radio" id="physical-1-no" name="physical-1" value="0">
-                                <label for="physical-1-no" class="no">No</label>
-                            </div>
-                        </div>
-                        <div class="question">
-                            <div class="question-label">
-                                <span>I am conscious of my diet and its effects.</span>
-                                <span class="category category-physical">Physical</span>
-                            </div>
-                            <div class="yes-no-toggle">
-                                <input type="radio" id="physical-2-yes" name="physical-2" value="1">
-                                <label for="physical-2-yes" class="yes">Yes</label>
-                                <input type="radio" id="physical-2-no" name="physical-2" value="0">
-                                <label for="physical-2-no" class="no">No</label>
-                            </div>
-                        </div>
-                        <div class="question">
-                            <div class="question-label">
-                                <span>I do 3+ aerobic and 2+ strength workouts weekly.</span>
-                                <span class="category category-physical">Physical</span>
-                            </div>
-                            <div class="yes-no-toggle">
-                                <input type="radio" id="physical-3-yes" name="physical-3" value="1">
-                                <label for="physical-3-yes" class="yes">Yes</label>
-                                <input type="radio" id="physical-3-no" name="physical-3" value="0">
-                                <label for="physical-3-no" class="no">No</label>
-                            </div>
-                        </div>
-                        <div class="question">
-                            <div class="question-label">
-                                <span>I take regular workday breaks.</span>
-                                <span class="category category-physical">Physical</span>
-                            </div>
-                            <div class="yes-no-toggle">
-                                <input type="radio" id="physical-4-yes" name="physical-4" value="1">
-                                <label for="physical-4-yes" class="yes">Yes</label>
-                                <input type="radio" id="physical-4-no" name="physical-4" value="0">
-                                <label for="physical-4-no" class="no">No</label>
-                            </div>
-                        </div>
-                        <div class="question">
-                            <div class="question-label">
-                                <span>I disconnect from work adequately.</span>
-                                <span class="category category-physical">Physical</span>
-                            </div>
-                            <div class="yes-no-toggle">
-                                <input type="radio" id="physical-5-yes" name="physical-5" value="1">
-                                <label for="physical-5-yes" class="yes">Yes</label>
-                                <input type="radio" id="physical-5-no" name="physical-5" value="0">
-                                <label for="physical-5-no" class="no">No</label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="questions-section" id="emotional-questions" style="display:none">
-                        <div class="question">
-                            <div class="question-label">
-                                <span>I feel enthusiastic at work.</span>
-                                <span class="category category-emotional">Emotional</span>
-                            </div>
-                            <div class="yes-no-toggle">
-                                <input type="radio" id="emotional-1-yes" name="emotional-1" value="1">
-                                <label for="emotional-1-yes" class="yes">Yes</label>
-                                <input type="radio" id="emotional-1-no" name="emotional-1" value="0">
-                                <label for="emotional-1-no" class="no">No</label>
-                            </div>
-                        </div>
-                        <div class="question">
-                            <div class="question-label">
-                                <span>I am fully present with loved ones.</span>
-                                <span class="category category-emotional">Emotional</span>
-                            </div>
-                            <div class="yes-no-toggle">
-                                <input type="radio" id="emotional-2-yes" name="emotional-2" value="1">
-                                <label for="emotional-2-yes" class="yes">Yes</label>
-                                <input type="radio" id="emotional-2-no" name="emotional-2" value="0">
-                                <label for="emotional-2-no" class="no">No</label>
-                            </div>
-                        </div>
-                        <div class="question">
-                            <div class="question-label">
-                                <span>I make time for enjoyable activities.</span>
-                                <span class="category category-emotional">Emotional</span>
-                            </div>
-                            <div class="yes-no-toggle">
-                                <input type="radio" id="emotional-3-yes" name="emotional-3" value="1">
-                                <label for="emotional-3-yes" class="yes">Yes</label>
-                                <input type="radio" id="emotional-3-no" name="emotional-3" value="0">
-                                <label for="emotional-3-no" class="no">No</label>
-                            </div>
-                        </div>
-                        <div class="question">
-                            <div class="question-label">
-                                <span>I regularly express appreciation.</span>
-                                <span class="category category-emotional">Emotional</span>
-                            </div>
-                            <div class="yes-no-toggle">
-                                <input type="radio" id="emotional-4-yes" name="emotional-4" value="1">
-                                <label for="emotional-4-yes" class="yes">Yes</label>
-                                <input type="radio" id="emotional-4-no" name="emotional-4" value="0">
-                                <label for="emotional-4-no" class="no">No</label>
-                            </div>
-                        </div>
-                        <div class="question">
-                            <div class="question-label">
-                                <span>I stay calm under work pressure.</span>
-                                <span class="category category-emotional">Emotional</span>
-                            </div>
-                            <div class="yes-no-toggle">
-                                <input type="radio" id="emotional-5-yes" name="emotional-5" value="1">
-                                <label for="emotional-5-yes" class="yes">Yes</label>
-                                <input type="radio" id="emotional-5-no" name="emotional-5" value="0">
-                                <label for="emotional-5-no" class="no">No</label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="questions-section" id="mental-questions" style="display:none">
-                        <div class="question">
-                            <div class="question-label">
-                                <span>I focus on one task at a time.</span>
-                                <span class="category category-mental">Mental</span>
-                            </div>
-                            <div class="yes-no-toggle">
-                                <input type="radio" id="mental-1-yes" name="mental-1" value="1">
-                                <label for="mental-1-yes" class="yes">Yes</label>
-                                <input type="radio" id="mental-1-no" name="mental-1" value="0">
-                                <label for="mental-1-no" class="no">No</label>
-                            </div>
-                        </div>
-                        <div class="question">
-                            <div class="question-label">
-                                <span>I stick to key priorities.</span>
-                                <span class="category category-mental">Mental</span>
-                            </div>
-                            <div class="yes-no-toggle">
-                                <input type="radio" id="mental-2-yes" name="mental-2" value="1">
-                                <label for="mental-2-yes" class="yes">Yes</label>
-                                <input type="radio" id="mental-2-no" name="mental-2" value="0">
-                                <label for="mental-2-no" class="no">No</label>
-                            </div>
-                        </div>
-                        <div class="question">
-                            <div class="question-label">
-                                <span>I prioritize important tasks first.</span>
-                                <span class="category category-mental">Mental</span>
-                            </div>
-                            <div class="yes-no-toggle">
-                                <input type="radio" id="mental-3-yes" name="mental-3" value="1">
-                                <label for="mental-3-yes" class="yes">Yes</label>
-                                <input type="radio" id="mental-3-no" name="mental-3" value="0">
-                                <label for="mental-3-no" class="no">No</label>
-                            </div>
-                        </div>
-                        <div class="question">
-                            <div class="question-label">
-                                <span>I take time to quiet my mind.</span>
-                                <span class="category category-mental">Mental</span>
-                            </div>
-                            <div class="yes-no-toggle">
-                                <input type="radio" id="mental-4-yes" name="mental-4" value="1">
-                                <label for="mental-4-yes" class="yes">Yes</label>
-                                <input type="radio" id="mental-4-no" name="mental-4" value="0">
-                                <label for="mental-4-no" class="no">No</label>
-                            </div>
-                        </div>
-                        <div class="question">
-                            <div class="question-label">
-                                <span>I reflect daily.</span>
-                                <span class="category category-mental">Mental</span>
-                            </div>
-                            <div class="yes-no-toggle">
-                                <input type="radio" id="mental-5-yes" name="mental-5" value="1">
-                                <label for="mental-5-yes" class="yes">Yes</label>
-                                <input type="radio" id="mental-5-no" name="mental-5" value="0">
-                                <label for="mental-5-no" class="no">No</label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="questions-section" id="spiritual-questions" style="display:none">
-                        <div class="question">
-                            <div class="question-label">
-                                <span>I am passionate about my work.</span>
-                                <span class="category category-spiritual">Spiritual</span>
-                            </div>
-                            <div class="yes-no-toggle">
-                                <input type="radio" id="spiritual-1-yes" name="spiritual-1" value="1">
-                                <label for="spiritual-1-yes" class="yes">Yes</label>
-                                <input type="radio" id="spiritual-1-no" name="spiritual-1" value="0">
-                                <label for="spiritual-1-no" class="no">No</label>
-                            </div>
-                        </div>
-                        <div class="question">
-                            <div class="question-label">
-                                <span>My decisions align with my purpose.</span>
-                                <span class="category category-spiritual">Spiritual</span>
-                            </div>
-                            <div class="yes-no-toggle">
-                                <input type="radio" id="spiritual-2-yes" name="spiritual-2" value="1">
-                                <label for="spiritual-2-yes" class="yes">Yes</label>
-                                <input type="radio" id="spiritual-2-no" name="spiritual-2" value="0">
-                                <label for="spiritual-2-no" class="no">No</label>
-                            </div>
-                        </div>
-                        <div class="question">
-                            <div class="question-label">
-                                <span>I balance self-care with caring for others.</span>
-                                <span class="category category-spiritual">Spiritual</span>
-                            </div>
-                            <div class="yes-no-toggle">
-                                <input type="radio" id="spiritual-3-yes" name="spiritual-3" value="1">
-                                <label for="spiritual-3-yes" class="yes">Yes</label>
-                                <input type="radio" id="spiritual-3-no" name="spiritual-3" value="0">
-                                <label for="spiritual-3-no" class="no">No</label>
-                            </div>
-                        </div>
-                        <div class="question">
-                            <div class="question-label">
-                                <span>My life aligns with my values.</span>
-                                <span class="category category-spiritual">Spiritual</span>
-                            </div>
-                            <div class="yes-no-toggle">
-                                <input type="radio" id="spiritual-4-yes" name="spiritual-4" value="1">
-                                <label for="spiritual-4-yes" class="yes">Yes</label>
-                                <input type="radio" id="spiritual-4-no" name="spiritual-4" value="0">
-                                <label for="spiritual-4-no" class="no">No</label>
-                            </div>
-                        </div>
-                        <div class="question">
-                            <div class="question-label">
-                                <span>I make a positive impact.</span>
-                                <span class="category category-spiritual">Spiritual</span>
-                            </div>
-                            <div class="yes-no-toggle">
-                                <input type="radio" id="spiritual-5-yes" name="spiritual-5" value="1">
-                                <label for="spiritual-5-yes" class="yes">Yes</label>
-                                <input type="radio" id="spiritual-5-no" name="spiritual-5" value="0">
-                                <label for="spiritual-5-no" class="no">No</label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="stepper">
-                        <button type="button" id="prev-btn" class="btn-secondary" style="display:none">Previous</button>
-                        <button type="button" id="next-btn">Next</button>
-                    </div>
-                    <div id="submission-result"></div>
-                </form>
-            </div>
-        </div>
-        <div class="view" id="results-view">
-            <div class="card">
-                <div class="total-score-container">
-                    <div class="total-score" id="total-score">Total Score: 0 (out of 20)</div>
-                    <div class="status-message" id="status-message">YOU ARE</div>
-                    <div class="average-score" id="average-score"></div>
-                </div>
-                <div class="results-bars">
-                    <div class="bar-container">
-                        <div class="bar-label">Physical (Score: <span id="physical-score">0</span>)</div>
-                        <div class="bar">
-                            <div class="bar-fill physical" id="physical-bar" style="width: 0%"></div>
-                        </div>
-                    </div>
-                    <div class="bar-container">
-                        <div class="bar-label">Emotional (Score: <span id="emotional-score">0</span>)</div>
-                        <div class="bar">
-                            <div class="bar-fill emotional" id="emotional-bar" style="width: 0%"></div>
-                        </div>
-                    </div>
-                    <div class="bar-container">
-                        <div class="bar-label">Mental (Score: <span id="mental-score">0</span>)</div>
-                        <div class="bar">
-                            <div class="bar-fill mental" id="mental-bar" style="width: 0%"></div>
-                        </div>
-                    </div>
-                    <div class="bar-container">
-                        <div class="bar-label">Spiritual / Purpose / Alignment (Score: <span id="spiritual-score">0</span>)</div>
-                        <div class="bar">
-                            <div class="bar-fill spiritual" id="spiritual-bar" style="width: 0%"></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="chart-container">
-                    <canvas id="total-score-chart"></canvas>
-                </div>
-                <div class="chart-container">
-                    <canvas id="section-scores-chart"></canvas>
-                </div>
-                <div class="stepper">
-                    <button type="button" id="restart-btn" class="btn-secondary">Restart Assessment</button>
-                </div>
-            </div>
+            <p>Users with the highest scores who agreed to appear on the group graph.</p>
+            <table class="user-table" id="user-table">
+                <thead>
+                    <tr>
+                        <th>Nickname</th>
+                        <th>Score (out of 20)</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <div id="error-message" class="error-message" style="display: none;"></div>
         </div>
     </div>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Register the datalabels plugin
-            Chart.register(ChartDataLabels);
-            
-            const categories = ['physical', 'emotional', 'mental', 'spiritual'];
-            const categoryInfo = {
-                physical: { title: 'Physical Energy', desc: 'Assess your physical energy level' },
-                emotional: { title: 'Emotional Energy', desc: 'Assess your emotional energy level' },
-                mental: { title: 'Mental Energy', desc: 'Assess your mental energy level' },
-                spiritual: { title: 'Spiritual & Purpose Energy', desc: 'Assess your spiritual and purpose energy level' }
-            };
-            
-            let currentCategoryIndex = 0;
-            let nickname = '';
-            let email = '';
-            let event = '';
-            let showOnGraph = false;
-            let sessionName = '';
-            let totalScoreChart = null;
-            let sectionScoresChart = null;
-            let currentAssessmentId = null;
-            
+        document.addEventListener('DOMContentLoaded', async () => {
             const getElement = id => document.getElementById(id);
-            const toggleView = (element, show) => element.classList.toggle('active', show);
-            
-            const formatDate = (dateString) => {
-                const date = new Date(dateString);
-                const day = String(date.getDate()).padStart(2, '0');
-                const month = String(date.getMonth() + 1).padStart(2, '0');
-                const year = date.getFullYear();
-                return `${day}.${month}.${year}`;
-            };
-            
-            const updateAssessmentView = () => {
-                document.querySelectorAll('.questions-section').forEach(el => el.style.display = 'none');
-                getElement(`${categories[currentCategoryIndex]}-questions`).style.display = 'block';
-                getElement('assessment-category-title').textContent = categoryInfo[categories[currentCategoryIndex]].title;
-                getElement('assessment-category-description').textContent = categoryInfo[categories[currentCategoryIndex]].desc;
-                getElement('prev-btn').style.display = currentCategoryIndex > 0 ? 'block' : 'none';
-                getElement('next-btn').textContent = currentCategoryIndex === categories.length - 1 ? 'Submit' : 'Next';
-                getElement('progress-bar-fill').style.width = `${(currentCategoryIndex + 1) / categories.length * 100}%`;
-                getElement('submission-result').innerHTML = '';
-            };
-            
-            const collectAllAnswers = () => {
-                const answers = {};
-                const scores = { physical: 0, emotional: 0, mental: 0, spiritual: 0, total: 0 };
-                
-                for (const category of categories) {
-                    for (let i = 1; i <= 5; i++) {
-                        const yesRadio = document.getElementById(`${category}-${i}-yes`);
-                        const noRadio = document.getElementById(`${category}-${i}-no`);
-                        
-                        if (yesRadio && yesRadio.checked) {
-                            answers[`${category}_${i}`] = parseInt(yesRadio.value);
-                            scores[category] += parseInt(yesRadio.value);
-                            scores.total += parseInt(yesRadio.value);
-                        } else if (noRadio && noRadio.checked) {
-                            answers[`${category}_${i}`] = parseInt(noRadio.value);
-                        } else {
-                            answers[`${category}_${i}`] = null;
-                        }
+
+            const fetchData = async () => {
+                try {
+                    // Use the API endpoint instead of Supabase directly
+                    const response = await fetch('https://energy-assessment.vercel.app/api/get-consolidated-results');
+                    
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        throw new Error(errorText);
                     }
+                    
+                    const data = await response.json();
+                    return data;
+                } catch (error) {
+                    console.error('Error fetching data:', error);
+                    getElement('error-message').textContent = `Error: ${error.message}`;
+                    getElement('error-message').style.display = 'block';
+                    return [];
                 }
-                return { answers, scores };
             };
-            
-            const getStatusMessage = (totalScore) => {
-                if (totalScore >= 17) return "FULLY ENERGIZED";
-                if (totalScore >= 13) return "MODERATELY ENERGIZED";
-                if (totalScore >= 9) return "SOMEWHAT ENERGIZED";
-                if (totalScore >= 5) return "FADING";
-                return "BURNED OUT";
-            };
-            
-            const displayResults = (scores, previousData = []) => {
-                getElement('physical-score').textContent = scores.physical;
-                getElement('physical-bar').style.width = `${scores.physical * 20}%`;
-                getElement('emotional-score').textContent = scores.emotional;
-                getElement('emotional-bar').style.width = `${scores.emotional * 20}%`;
-                getElement('mental-score').textContent = scores.mental;
-                getElement('mental-bar').style.width = `${scores.mental * 20}%`;
-                getElement('spiritual-score').textContent = scores.spiritual;
-                getElement('spiritual-bar').style.width = `${scores.spiritual * 20}%`;
-                
-                let totalScoreHTML = `Total Score: ${scores.total} (out of 20)`;
-                getElement('total-score').innerHTML = totalScoreHTML;
 
-                const statusMessage = getStatusMessage(scores.total);
-                getElement('status-message').textContent = `YOU ARE ${statusMessage}`;
-
-                if (previousData.length > 0) {
-                    const allEntries = previousData.concat([{ scores, created_at: new Date().toISOString() }]);
-                    const totalScores = allEntries.map(entry => entry.scores.total);
-                    const avgTotalScore = totalScores.reduce((sum, score) => sum + score, 0) / totalScores.length;
-                    getElement('average-score').innerHTML = `Average Total Score: ${avgTotalScore.toFixed(2)} (out of 20)`;
-
-                    const labels = allEntries.map(entry => formatDate(entry.created_at));
-                    const totalScoreData = allEntries.map(entry => entry.scores.total);
-                    const physicalData = allEntries.map(entry => entry.scores.physical);
-                    const emotionalData = allEntries.map(entry => entry.scores.emotional);
-                    const mentalData = allEntries.map(entry => entry.scores.mental);
-                    const spiritualData = allEntries.map(entry => entry.scores.spiritual);
-
-                    if (totalScoreChart) totalScoreChart.destroy();
-                    if (sectionScoresChart) sectionScoresChart.destroy();
-
-                    totalScoreChart = new Chart(getElement('total-score-chart'), {
-                        type: 'line',
-                        data: {
-                            labels: labels,
-                            datasets: [{
-                                label: 'Total Score',
-                                data: totalScoreData,
-                                borderColor: '#4f46e5',
-                                fill: false
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            plugins: {
-                                title: {
-                                    display: true,
-                                    text: 'Total Score Over Time'
-                                },
-                                datalabels: {
-                                    anchor: 'end',
-                                    align: 'top',
-                                    formatter: (value) => value,
-                                    font: {
-                                        weight: 'bold'
-                                    }
-                                }
-                            },
-                            scales: {
-                                y: {
-                                    beginAtZero: true,
-                                    max: 20,
-                                    title: {
-                                        display: true,
-                                        text: 'Score'
-                                    }
-                                },
-                                x: {
-                                    title: {
-                                        display: true,
-                                        text: 'Date'
-                                    }
-                                }
-                            }
-                        }
-                    });
-
-                    sectionScoresChart = new Chart(getElement('section-scores-chart'), {
-                        type: 'line',
-                        data: {
-                            labels: labels,
-                            datasets: [
-                                {
-                                    label: 'Physical',
-                                    data: physicalData,
-                                    borderColor: '#0369a1',
-                                    fill: false
-                                },
-                                {
-                                    label: 'Emotional',
-                                    data: emotionalData,
-                                    borderColor: '#92400e',
-                                    fill: false
-                                },
-                                {
-                                    label: 'Mental',
-                                    data: mentalData,
-                                    borderColor: '#166534',
-                                    fill: false
-                                },
-                                {
-                                    label: 'Spiritual',
-                                    data: spiritualData,
-                                    borderColor: '#4338ca',
-                                    fill: false
-                                }
-                            ]
-                        },
-                        options: {
-                            responsive: true,
-                            plugins: {
-                                title: {
-                                    display: true,
-                                    text: 'Scores by Section Over Time'
-                                },
-                                datalabels: {
-                                    anchor: 'end',
-                                    align: 'top',
-                                    formatter: (value) => value,
-                                    font: {
-                                        weight: 'bold'
-                                    }
-                                }
-                            },
-                            scales: {
-                                y: {
-                                    beginAtZero: true,
-                                    max: 5,
-                                    title: {
-                                        display: true,
-                                        text: 'Score'
-                                    }
-                                },
-                                x: {
-                                    title: {
-                                        display: true,
-                                        text: 'Date'
-                                    }
-                                }
-                            }
-                        }
-                    });
-                } else {
-                    getElement('average-score').innerHTML = '';
-                    getElement('total-score-chart').style.display = 'none';
-                    getElement('section-scores-chart').style.display = 'none';
-                }
-
-                toggleView(getElement('assessment-view'), false);
-                toggleView(getElement('results-view'), true);
-            };
-            
-            const fetchPreviousResults = async (email, currentId) => {
-              try {
-                // Using absolute URL instead of relative path
-                let url = `https://energy-assessment.vercel.app/api/get-previous-results?email=${encodeURIComponent(email)}`;
-                if (currentId) {
-                  url += `&currentId=${encodeURIComponent(currentId)}`;
-                }
-                
-                console.log("Fetching previous results from:", url);
-                
-                const response = await fetch(url);
-                console.log("Response status:", response.status);
-                
-                if (!response.ok) {
-                  const errorText = await response.text();
-                  console.error("Error response:", errorText);
-                  throw new Error('Failed to fetch previous results');
-                }
-                
-                const data = await response.json();
-                console.log("Received previous results:", data);
-                
-                if (data && data.length > 0) {
-                  return data.map(entry => {
-                    const scores = { physical: 0, emotional: 0, mental: 0, spiritual: 0, total: 0 };
-                    for (let i = 1; i <= 5; i++) {
-                      const answer = entry[`answer_${i}`];
-                      if (answer !== null && answer !== undefined) {
-                        scores.physical += parseInt(answer);
-                        scores.total += parseInt(answer);
-                      }
-                    }
-                    for (let i = 6; i <= 10; i++) {
-                      const answer = entry[`answer_${i}`];
-                      if (answer !== null && answer !== undefined) {
-                        scores.emotional += parseInt(answer);
-                        scores.total += parseInt(answer);
-                      }
-                    }
-                    for (let i = 11; i <= 15; i++) {
-                      const answer = entry[`answer_${i}`];
-                      if (answer !== null && answer !== undefined) {
-                        scores.mental += parseInt(answer);
-                        scores.total += parseInt(answer);
-                      }
-                    }
-                    for (let i = 16; i <= 20; i++) {
-                      const answer = entry[`answer_${i}`];
-                      if (answer !== null && answer !== undefined) {
-                        scores.spiritual += parseInt(answer);
-                        scores.total += parseInt(answer);
-                      }
-                    }
-                    return { scores, created_at: entry.created_at };
-                  });
-                }
-                return [];
-              } catch (error) {
-                console.error('Error fetching previous results:', error);
-                return [];
-              }
-            };
-            
-            const saveAnswersToSupabase = async (nickname, email, event, showOnGraph, answers) => {
-              try {
-                console.log("Saving answers to API...");
-                
-                const userData = {
-                  nickname,
-                  email,
-                  event,
-                  show_on_graph: showOnGraph
-                };
-                
-                let answerCounter = 1;
-                for (const category of categories) {
-                  for (let i = 1; i <= 5; i++) {
-                    userData[`answer_${answerCounter}`] = answers[`${category}_${i}`];
-                    answerCounter++;
-                  }
-                }
-                
-                console.log("Formatted user data:", userData);
-                
-                // Using absolute URL instead of relative path
-                const response = await fetch('https://energy-assessment.vercel.app/api/save-assessment', {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json',
-                  },
-                  body: JSON.stringify(userData)
+            const populateEventFilter = (data) => {
+                const eventFilter = getElement('event-filter');
+                const events = [...new Set(data.map(user => user.event))].filter(event => event);
+                events.forEach(event => {
+                    const option = document.createElement('option');
+                    option.value = event;
+                    option.textContent = event;
+                    eventFilter.appendChild(option);
                 });
-                
-                console.log("Response status:", response.status);
-                
-                if (!response.ok) {
-                  const errorText = await response.text();
-                  console.error("Error response:", errorText);
-                  throw new Error('Failed to save assessment');
-                }
-                
-                const data = await response.json();
-                console.log("Data saved successfully:", data);
-                currentAssessmentId = data.id;
-                return { success: true, data };
-              } catch (error) {
-                console.error('Error saving answers:', error);
-                return { success: false, error: error.message };
-              }
             };
-            
-            getElement('registration-form').addEventListener('submit', e => {
-                e.preventDefault();
-                nickname = getElement('nickname').value.trim();
-                email = getElement('email').value.trim();
-                event = getElement('event').value;
-                showOnGraph = getElement('consent').checked;
-                
-                if (!nickname) {
-                    getElement('reg-error').textContent = 'Please enter a nickname';
-                    getElement('reg-error').style.display = 'block';
+
+            const calculateTotalScore = (user) => {
+                return ((user.answer_1 || 0) + (user.answer_2 || 0) + (user.answer_3 || 0) + (user.answer_4 || 0) + (user.answer_5 || 0) +
+                        (user.answer_6 || 0) + (user.answer_7 || 0) + (user.answer_8 || 0) + (user.answer_9 || 0) + (user.answer_10 || 0) +
+                        (user.answer_11 || 0) + (user.answer_12 || 0) + (user.answer_13 || 0) + (user.answer_14 || 0) + (user.answer_15 || 0) +
+                        (user.answer_16 || 0) + (user.answer_17 || 0) + (user.answer_18 || 0) + (user.answer_19 || 0) + (user.answer_20 || 0));
+            };
+
+            const calculateAverages = (data) => {
+                if (!data || data.length === 0) return { physical: 0, emotional: 0, mental: 0, spiritual: 0, total: 0 };
+
+                let physicalSum = 0, emotionalSum = 0, mentalSum = 0, spiritualSum = 0, totalSum = 0;
+                const userCount = data.length;
+
+                data.forEach(user => {
+                    const physical = (user.answer_1 || 0) + (user.answer_2 || 0) + (user.answer_3 || 0) + (user.answer_4 || 0) + (user.answer_5 || 0);
+                    const emotional = (user.answer_6 || 0) + (user.answer_7 || 0) + (user.answer_8 || 0) + (user.answer_9 || 0) + (user.answer_10 || 0);
+                    const mental = (user.answer_11 || 0) + (user.answer_12 || 0) + (user.answer_13 || 0) + (user.answer_14 || 0) + (user.answer_15 || 0);
+                    const spiritual = (user.answer_16 || 0) + (user.answer_17 || 0) + (user.answer_18 || 0) + (user.answer_19 || 0) + (user.answer_20 || 0);
+
+                    physicalSum += physical;
+                    emotionalSum += emotional;
+                    mentalSum += mental;
+                    spiritualSum += spiritual;
+                    totalSum += (physical + emotional + mental + spiritual);
+                });
+
+                return {
+                    physical: (physicalSum / userCount).toFixed(1),
+                    emotional: (emotionalSum / userCount).toFixed(1),
+                    mental: (mentalSum / userCount).toFixed(1),
+                    spiritual: (spiritualSum / userCount).toFixed(1),
+                    total: (totalSum / userCount).toFixed(1),
+                    responseCount: userCount
+                };
+            };
+
+            const getStatusMessage = (totalScore) => {
+                const score = parseFloat(totalScore);
+                if (score >= 17) return "We are Fully energized";
+                if (score >= 13) return "We are Moderately energized";
+                if (score >= 9) return "We are Somewhat energized";
+                if (score >= 5) return "We are Fading";
+                return "We are Burned out";
+            };
+
+            const updateSliderMax = (maxUsers) => {
+                const slider = getElement('user-count-slider');
+                slider.max = maxUsers;
+                slider.value = Math.min(slider.value, maxUsers);
+                getElement('slider-value').textContent = slider.value;
+            };
+
+            const displayAverages = (data) => {
+                const eventFilter = getElement('event-filter').value;
+                const filteredData = eventFilter ? data.filter(user => user.event === eventFilter) : data;
+                const averages = calculateAverages(filteredData);
+
+                getElement('physical-score').textContent = averages.physical;
+                getElement('physical-bar').style.width = `${averages.physical * 20}%`;
+                getElement('emotional-score').textContent = averages.emotional;
+                getElement('emotional-bar').style.width = `${averages.emotional * 20}%`;
+                getElement('mental-score').textContent = averages.mental;
+                getElement('mental-bar').style.width = `${averages.mental * 20}%`;
+                getElement('spiritual-score').textContent = averages.spiritual;
+                getElement('spiritual-bar').style.width = `${averages.spiritual * 20}%`;
+
+                const statusMessage = getStatusMessage(averages.total);
+                const combinedMessage = `${statusMessage}. Average Total Score: ${averages.total} (out of 20)`;
+                getElement('combined-score-message').innerHTML = combinedMessage;
+
+                getElement('consolidated-results-title').textContent = `Consolidated Results - ${averages.responseCount} responses`;
+            };
+
+            const displayUserTable = (data) => {
+                const eventFilter = getElement('event-filter').value;
+                const filteredData = eventFilter ? data.filter(user => user.event === eventFilter) : data;
+                const tbody = getElement('user-table').querySelector('tbody');
+                const consentingUsers = filteredData.filter(user => user.show_on_graph);
+                const sliderValue = parseInt(getElement('user-count-slider').value);
+
+                updateSliderMax(consentingUsers.length);
+
+                tbody.innerHTML = '';
+                if (consentingUsers.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="2">No users have agreed to appear on the group graph.</td></tr>';
                     return;
                 }
-                
-                if (!email) {
-                    getElement('reg-error').textContent = 'Please enter an email';
-                    getElement('reg-error').style.display = 'block';
-                    return;
+
+                const usersWithScores = consentingUsers.map(user => ({
+                    ...user,
+                    totalScore: calculateTotalScore(user)
+                }));
+
+                const topUsers = usersWithScores
+                    .sort((a, b) => b.totalScore - a.totalScore)
+                    .slice(0, sliderValue);
+
+                topUsers.forEach(user => {
+                    const percentage = (user.totalScore / 20) * 100;
+
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${user.nickname}</td>
+                        <td>
+                            <div class="bar-container">
+                                <div class="bar">
+                                    <div class="bar-fill user" style="width: ${percentage}%"></div>
+                                </div>
+                            </div>
+                            ${user.totalScore}
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+
+                if (topUsers.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="2">No users available.</td></tr>';
                 }
-                
-                if (!event) {
-                    getElement('reg-error').textContent = 'Please select an event';
-                    getElement('reg-error').style.display = 'block';
-                    return;
-                }
-                
-                console.log("Registration form submitted");
-                console.log("Nickname:", nickname);
-                console.log("Email:", email);
-                console.log("Event:", event);
-                console.log("Show on graph:", showOnGraph);
-                
-                getElement('reg-error').style.display = 'none';
-                toggleView(getElement('registration-view'), false);
-                toggleView(getElement('assessment-view'), true);
+            };
+
+            const data = await fetchData();
+            populateEventFilter(data);
+            displayAverages(data);
+            displayUserTable(data);
+
+            getElement('event-filter').addEventListener('change', () => {
+                displayAverages(data);
+                displayUserTable(data);
             });
-            
-            getElement('session-form').addEventListener('submit', e => {
-                e.preventDefault();
-                sessionName = getElement('session-name').value.trim();
-                toggleView(getElement('session-view'), false);
-                toggleView(getElement('assessment-view'), true);
+
+            getElement('user-count-slider').addEventListener('input', () => {
+                getElement('slider-value').textContent = getElement('user-count-slider').value;
+                displayUserTable(data);
             });
-            
-            getElement('next-btn').addEventListener('click', async () => {
-                const currentCategory = categories[currentCategoryIndex];
-                if (document.querySelectorAll(`#${currentCategory}-questions input[type="radio"]:checked`).length < 5) {
-                    alert('Please answer all questions in this section.');
-                    return;
-                }
-                
-                if (currentCategoryIndex === categories.length - 1) {
-                    const { answers, scores } = collectAllAnswers();
-                    
-                    const result = await saveAnswersToSupabase(nickname, email, event, showOnGraph, answers);
-                    
-                    if (result.success) {
-                        getElement('submission-result').innerHTML = '<div class="success-message">Your assessment has been successfully submitted!</div>';
-                        
-                        const previousResults = await fetchPreviousResults(email, result.data.id);
-                        displayResults(scores, previousResults);
-                    } else {
-                        getElement('submission-result').innerHTML = `<div class="error-message">Error: ${result.error}</div>`;
-                    }
-                } else {
-                    currentCategoryIndex++;
-                    updateAssessmentView();
-                }
-            });
-            
-            getElement('prev-btn').addEventListener('click', () => {
-                if (currentCategoryIndex > 0) {
-                    currentCategoryIndex--;
-                    updateAssessmentView();
-                }
-            });
-            
-            getElement('restart-btn').addEventListener('click', () => {
-                document.querySelectorAll('input[type="radio"]').forEach(input => input.checked = false);
-                currentCategoryIndex = 0;
-                toggleView(getElement('results-view'), false);
-                toggleView(getElement('registration-view'), true);
-                getElement('submission-result').innerHTML = '';
-                updateAssessmentView();
-            });
-            
-            updateAssessmentView();
-            
-            console.log("Application initialized successfully");
         });
     </script>
 </body>
