@@ -180,7 +180,7 @@
         #overall-energy-bar .score-line {
             height: 23px;
         }
-        /* Style for the score marker above the bar */
+        /* Modified style for the score marker - removed box styling */
         .score-marker {
             position: absolute;
             font-weight: 700;
@@ -189,9 +189,7 @@
             z-index: 20;
             top: -22px;
             transform: translateX(-50%);
-            background-color: #fff;
-            padding: 2px 5px;
-            border: 1px solid #000;
+            /* Removed background-color, border, and padding */
         }
 
         @media (max-width: 640px) {
@@ -246,7 +244,7 @@
             .score-marker {
                 font-size: 0.9rem;
                 top: -18px;
-                padding: 1px 4px;
+                /* Removed padding */
             }
         }
 
