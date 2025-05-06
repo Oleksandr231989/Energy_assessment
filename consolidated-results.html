@@ -524,11 +524,19 @@
                                     if (value === 0) return '';
                                     const percentage = totalResponses > 0 ? ((value / totalResponses) * 100).toFixed(1) : 0;
                                     const label = context.chart.data.labels[context.dataIndex];
-                                    return `${label}\n${value} (${percentage}%)`;
+                                    
+                                    // Special formatting for specific labels
+                                    if (label === 'Somewhat Energized') {
+                                        return `Somewhat\nEnergized\n${value} (${percentage}%)`;
+                                    } else if (label === 'Moderately Energized') {
+                                        return `Moderately\nEnergized\n${value} (${percentage}%)`;
+                                    } else {
+                                        return `${label}\n${value} (${percentage}%)`;
+                                    }
                                 },
                                 textAlign: 'center',
                                 font: {
-                                    size: 16, /* Increased from 12px to 16px */
+                                    size: 16,
                                     weight: 'bold'
                                 },
                                 anchor: 'center',
