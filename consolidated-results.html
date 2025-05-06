@@ -57,6 +57,7 @@
         }
         .bar-container {
             margin-bottom: 1rem;
+            position: relative;
         }
         .bar-label {
             font-weight: 500;
@@ -67,6 +68,7 @@
             background-color: #e5e7eb;
             border-radius: 4px;
             overflow: hidden;
+            display: flex;
         }
         .bar-fill {
             height: 100%;
@@ -77,6 +79,11 @@
         .bar-fill.mental { background-color: #dcfce7; }
         .bar-fill.spiritual { background-color: #e0e7ff; }
         .bar-fill.user { background-color: #c3dafe; }
+        .bar-fill.fully-energized { background-color: #16a34a; }
+        .bar-fill.moderately-energized { background-color: #22c55e; }
+        .bar-fill.somewhat-energized { background-color: #86efac; }
+        .bar-fill.fading { background-color: #f97316; }
+        .bar-fill.burned-out { background-color: #dc2626; }
         .total-score-container {
             margin-bottom: 1rem;
         }
@@ -148,6 +155,24 @@
             max-width: 400px;
             margin: 0 auto;
         }
+        .score-marker {
+            position: absolute;
+            top: 0;
+            height: 20px;
+            width: 2px;
+            background-color: #000;
+            z-index: 10;
+        }
+        .score-marker::after {
+            content: attr(data-score);
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: #000;
+        }
 
         @media (max-width: 640px) {
             .container {
@@ -187,6 +212,13 @@
             .chart-container {
                 max-width: 300px;
             }
+            .score-marker {
+                height: 16px;
+            }
+            .score-marker::after {
+                font-size: 0.75rem;
+                top: -18px;
+            }
         }
 
         @media (max-width: 400px) {
@@ -222,6 +254,17 @@
                 <div class="combined-score-message" id="combined-score-message">We are</div>
             </div>
             <div class="results-bars">
+                <div class="bar-container">
+                    <div class="bar-label">Overall Energy Distribution</div>
+                    <div class="bar" id="overall-energy-bar">
+                        <div class="bar-fill fully-energized" id="overall-fully-energized" style="width: 0%"></div>
+                        <div class="bar-fill moderately-energized" id="overall-moderately-energized" style="width: 0%"></div>
+                        <div class="bar-fill somewhat-energized" id="overall-somewhat-energized" style="width: 0%"></div>
+                        <div class="bar-fill fading" id="overall-fading" style="width: 0%"></div>
+                        <div class="bar-fill burned-out" id="overall-burned-out" style="width: 0%"></div>
+                    </div>
+                    <div class="score-marker" id="score-marker" style="left: 0%" data-score="0"></div>
+                </div>
                 <div class="bar-container">
                     <div class="bar-label">Physical (Average Score: <span id="physical-score">0</span>)</div>
                     <div class="bar">
@@ -373,6 +416,32 @@
                 return distribution;
             };
 
+            const displayOverallEnergyBar = (data) => {
+                const eventFilter = getElement('event-filter').value;
+                const filteredData = eventFilter ? data.filter(user => user.event === eventFilter) : data;
+                const distribution = calculateEnergyDistribution(filteredData);
+                const totalResponses = filteredData.length;
+
+                const fullyEnergizedWidth = totalResponses > 0 ? (distribution.fullyEnergized / totalResponses) * 100 : 0;
+                const moderatelyEnergizedWidth = totalResponses > 0 ? (distribution.moderatelyEnergized / totalResponses) * 100 : 0;
+                const somewhatEnergizedWidth = totalResponses > 0 ? (distribution.somewhatEnergized / totalResponses) * 100 : 0;
+                const fadingWidth = totalResponses > 0 ? (distribution.fading / totalResponses) * 100 : 0;
+                const burnedOutWidth = totalResponses > 0 ? (distribution.burnedOut / totalResponses) * 100 : 0;
+
+                getElement('overall-fully-energized').style.width = `${fullyEnergizedWidth}%`;
+                getElement('overall-moderately-energized').style.width = `${moderatelyEnergizedWidth}%`;
+                getElement('overall-somewhat-energized').style.width = `${somewhatEnergizedWidth}%`;
+                getElement('overall-fading').style.width = `${fadingWidth}%`;
+                getElement('overall-burned-out').style.width = `${burnedOutWidth}%`;
+
+                const averages = calculateAverages(filteredData);
+                const totalScore = averages.total;
+                const scorePosition = (totalScore / 20) * 100; // Position as a percentage of the bar
+                const scoreMarker = getElement('score-marker');
+                scoreMarker.style.left = `${scorePosition}%`;
+                scoreMarker.setAttribute('data-score', totalScore);
+            };
+
             const displayEnergyPieChart = (data) => {
                 const eventFilter = getElement('event-filter').value;
                 const filteredData = eventFilter ? data.filter(user => user.event === eventFilter) : data;
@@ -412,15 +481,15 @@
                         responsive: true,
                         plugins: {
                             legend: {
-                                display: false // Hide the legend
+                                display: false
                             },
                             title: {
-                                display: false // Hide the title
+                                display: false
                             },
                             datalabels: {
                                 color: '#000',
                                 formatter: (value, context) => {
-                                    if (value === 0) return ''; // Hide labels for zero values
+                                    if (value === 0) return '';
                                     const percentage = totalResponses > 0 ? ((value / totalResponses) * 100).toFixed(1) : 0;
                                     const label = context.chart.data.labels[context.dataIndex];
                                     return `${label}\n${value} (${percentage}%)`;
@@ -517,11 +586,13 @@
             const data = await fetchData();
             populateEventFilter(data);
             displayAverages(data);
+            displayOverallEnergyBar(data);
             displayEnergyPieChart(data);
             displayUserTable(data);
 
             getElement('event-filter').addEventListener('change', () => {
                 displayAverages(data);
+                displayOverallEnergyBar(data);
                 const existingChart = Chart.getChart('energy-pie-chart');
                 if (existingChart) {
                     existingChart.destroy();
