@@ -468,6 +468,11 @@
                 const distribution = calculateEnergyDistribution(filteredData);
                 const totalResponses = filteredData.length;
 
+                // Increase chart size to give more room for labels
+                const chartContainer = getElement('energy-pie-chart').parentNode;
+                chartContainer.style.maxWidth = '450px'; // Increased from 400px
+                chartContainer.style.height = '400px'; // Increased from 350px
+
                 const ctx = getElement('energy-pie-chart').getContext('2d');
                 new Chart(ctx, {
                     type: 'pie',
@@ -506,6 +511,9 @@
                             title: {
                                 display: false
                             },
+                            tooltip: {
+                                enabled: false // Disable tooltips to avoid interference with labels
+                            },
                             datalabels: {
                                 color: '#000',
                                 formatter: (value, context) => {
@@ -516,12 +524,20 @@
                                 },
                                 textAlign: 'center',
                                 font: {
-                                    size: 16, // Changed from 12 to 16 - Increased by 33%
+                                    size: 14, // Adjusted size to fit better within segments
                                     weight: 'bold'
                                 },
-                                anchor: 'center',
+                                anchor: 'center', 
                                 align: 'center',
-                                padding: 4 // Added padding to give more space around text
+                                padding: 3, // Reduced padding slightly
+                                display: function(context) {
+                                    // Only display if the segment is big enough to contain text
+                                    return context.dataset.data[context.dataIndex] > 0;
+                                },
+                                // Ensure labels stay within their slices
+                                clamp: true,
+                                // Add some spacing between lines
+                                lineHeight: 1.2
                             }
                         }
                     },
