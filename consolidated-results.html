@@ -166,11 +166,19 @@
         }
         .score-line {
             position: absolute;
-            top: -4px;
-            height: 28px;
-            width: 8px;
+            top: -6px;
+            height: 32px;
+            width: 6px;
             background-color: #000;
             z-index: 10;
+        }
+        .score-value {
+            position: absolute;
+            top: -22px;
+            font-size: 12px;
+            font-weight: bold;
+            transform: translateX(-50%);
+            white-space: nowrap;
         }
 
         @media (max-width: 640px) {
@@ -212,9 +220,13 @@
                 max-width: 300px;
             }
             .score-line {
-                height: 24px;
-                top: -4px;
-                width: 6px;
+                height: 26px;
+                top: -5px;
+                width: 4.5px;
+            }
+            .score-value {
+                top: -18px;
+                font-size: 10px;
             }
         }
 
@@ -259,7 +271,9 @@
                         <div class="bar-fill somewhat-energized">Somewhat Energized</div>
                         <div class="bar-fill moderately-energized">Moderately Energized</div>
                         <div class="bar-fill fully-energized">Fully Energized</div>
-                        <div class="score-line" id="score-line" style="left: 68%"></div>
+                        <div class="score-line" id="score-line" style="left: 68%">
+                            <div class="score-value" id="score-value">13.6</div>
+                        </div>
                     </div>
                 </div>
                 <div class="bar-container">
@@ -421,6 +435,10 @@
                 const scorePosition = (totalScore / 20) * 100; // Position as a percentage of the bar
                 const scoreLine = getElement('score-line');
                 scoreLine.style.left = `${scorePosition}%`;
+                
+                // Set the score value above the line
+                const scoreValue = getElement('score-value');
+                scoreValue.textContent = totalScore;
             };
 
             const displayEnergyPieChart = (data) => {
