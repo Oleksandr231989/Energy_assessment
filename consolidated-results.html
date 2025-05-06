@@ -535,16 +535,7 @@
                                 // Use consistent positioning for all labels
                                 anchor: 'center',
                                 align: 'center',
-                                // Position each label in its own section with consistent approach
-                                rotation: function(context) {
-                                    // Get the angle in the middle of the slice
-                                    const data = context.chart.getDatasetMeta(0).data;
-                                    const centerAngle = (data[context.dataIndex].startAngle + data[context.dataIndex].endAngle) / 2;
-                                    
-                                    // Adjust label rotation to align with the segment radius
-                                    // This helps prevent overlaps by aligning text with segment direction
-                                    return centerAngle * (180 / Math.PI) - 90;
-                                },
+                                // No rotation - this was causing the upside-down text
                                 offset: function(context) {
                                     // Position all labels at approximately 65% of the radius
                                     const outerRadius = context.chart.chartArea.width / 2;
