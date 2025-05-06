@@ -184,13 +184,14 @@
         .score-marker {
             position: absolute;
             font-weight: 700;
-            font-size: 0.85rem;
+            font-size: 1rem;
             color: #000;
             z-index: 20;
-            top: -18px;
+            top: -22px;
             transform: translateX(-50%);
             background-color: #fff;
-            padding: 0 3px;
+            padding: 2px 5px;
+            border: 1px solid #000;
         }
 
         @media (max-width: 640px) {
@@ -243,8 +244,9 @@
                 height: 20px;
             }
             .score-marker {
-                font-size: 0.8rem;
-                top: -15px;
+                font-size: 0.9rem;
+                top: -18px;
+                padding: 1px 4px;
             }
         }
 
@@ -284,7 +286,7 @@
                 <div class="bar-container">
                     <div class="bar-label">Overall Energy Distribution</div>
                     <div class="bar" id="overall-energy-bar">
-                        <div class="score-marker" id="overall-score-marker">0</div>
+                        <div class="score-marker" id="overall-score-marker">0.0</div>
                         <div class="bar-fill burned-out">Burned Out</div>
                         <div class="bar-fill fading">Fading</div>
                         <div class="bar-fill somewhat-energized">Somewhat Energized</div>
@@ -453,8 +455,9 @@
                 const scoreLine = getElement('score-line');
                 scoreLine.style.left = `${scorePosition}%`;
                 
-                // Update the score marker above the bar
-                getElement('overall-score-marker').textContent = totalScore;
+                // Ensure we're showing the score value
+                const scoreValue = parseFloat(totalScore).toFixed(1);
+                getElement('overall-score-marker').textContent = scoreValue;
                 // Position the score marker at the same spot as the score line
                 getElement('overall-score-marker').style.left = `${scorePosition}%`;
             };
