@@ -69,34 +69,21 @@
             border-radius: 4px;
             overflow: hidden;
             display: flex;
-            position: relative;
-        }
-        /* Special style for the overall energy bar - 25% thinner */
-        #overall-energy-bar {
-            height: 15px;
         }
         .bar-fill {
             height: 100%;
             transition: width 0.5s ease;
-            position: absolute;
-            top: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: #000;
-            font-size: 12px;
-            font-weight: bold;
         }
-        .bar-fill.burned-out { background-color: #dc2626; width: 20%; left: 0%; }
-        .bar-fill.fading { background-color: #f97316; width: 20%; left: 20%; }
-        .bar-fill.somewhat-energized { background-color: #86efac; width: 20%; left: 40%; }
-        .bar-fill.moderately-energized { background-color: #22c55e; width: 20%; left: 60%; }
-        .bar-fill.fully-energized { background-color: #16a34a; width: 20%; left: 80%; }
         .bar-fill.physical { background-color: #e0f2fe; }
         .bar-fill.emotional { background-color: #fef3c7; }
         .bar-fill.mental { background-color: #dcfce7; }
         .bar-fill.spiritual { background-color: #e0e7ff; }
         .bar-fill.user { background-color: #c3dafe; }
+        .bar-fill.fully-energized { background-color: #16a34a; }
+        .bar-fill.moderately-energized { background-color: #22c55e; }
+        .bar-fill.somewhat-energized { background-color: #86efac; }
+        .bar-fill.fading { background-color: #f97316; }
+        .bar-fill.burned-out { background-color: #dc2626; }
         .total-score-container {
             margin-bottom: 1rem;
         }
@@ -168,30 +155,23 @@
             max-width: 400px;
             margin: 0 auto;
         }
-        .score-line {
+        .score-marker {
             position: absolute;
-            top: -4px;
-            height: 28px;
-            width: 8px;
+            top: 0;
+            height: 20px;
+            width: 2px;
             background-color: #000;
             z-index: 10;
         }
-        /* Adjust the score line height for the thinner bar */
-        #overall-energy-bar .score-line {
-            height: 23px;
-        }
-        /* Style for the score marker above the bar */
-        .score-marker {
+        .score-marker::after {
+            content: attr(data-score);
             position: absolute;
-            font-weight: 700;
-            font-size: 1rem;
-            color: #000;
-            z-index: 20;
-            top: -22px;
+            top: -20px;
+            left: 50%;
             transform: translateX(-50%);
-            background-color: #fff;
-            padding: 2px 5px;
-            border: 1px solid #000;
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: #000;
         }
 
         @media (max-width: 640px) {
@@ -216,9 +196,6 @@
             .bar {
                 height: 16px;
             }
-            #overall-energy-bar {
-                height: 12px;
-            }
             .bar-label {
                 font-size: 0.85rem;
             }
@@ -235,18 +212,12 @@
             .chart-container {
                 max-width: 300px;
             }
-            .score-line {
-                height: 24px;
-                top: -4px;
-                width: 6px;
-            }
-            #overall-energy-bar .score-line {
-                height: 20px;
-            }
             .score-marker {
-                font-size: 0.9rem;
+                height: 16px;
+            }
+            .score-marker::after {
+                font-size: 0.75rem;
                 top: -18px;
-                padding: 1px 4px;
             }
         }
 
@@ -286,14 +257,13 @@
                 <div class="bar-container">
                     <div class="bar-label">Overall Energy Distribution</div>
                     <div class="bar" id="overall-energy-bar">
-                        <div class="score-marker" id="overall-score-marker">0.0</div>
-                        <div class="bar-fill burned-out">Burned Out</div>
-                        <div class="bar-fill fading">Fading</div>
-                        <div class="bar-fill somewhat-energized">Somewhat Energized</div>
-                        <div class="bar-fill moderately-energized">Moderately Energized</div>
-                        <div class="bar-fill fully-energized">Fully Energized</div>
-                        <div class="score-line" id="score-line" style="left: 68%"></div>
+                        <div class="bar-fill fully-energized" id="overall-fully-energized" style="width: 0%"></div>
+                        <div class="bar-fill moderately-energized" id="overall-moderately-energized" style="width: 0%"></div>
+                        <div class="bar-fill somewhat-energized" id="overall-somewhat-energized" style="width: 0%"></div>
+                        <div class="bar-fill fading" id="overall-fading" style="width: 0%"></div>
+                        <div class="bar-fill burned-out" id="overall-burned-out" style="width: 0%"></div>
                     </div>
+                    <div class="score-marker" id="score-marker" style="left: 0%" data-score="0"></div>
                 </div>
                 <div class="bar-container">
                     <div class="bar-label">Physical (Average Score: <span id="physical-score">0</span>)</div>
@@ -449,17 +419,27 @@
             const displayOverallEnergyBar = (data) => {
                 const eventFilter = getElement('event-filter').value;
                 const filteredData = eventFilter ? data.filter(user => user.event === eventFilter) : data;
+                const distribution = calculateEnergyDistribution(filteredData);
+                const totalResponses = filteredData.length;
+
+                const fullyEnergizedWidth = totalResponses > 0 ? (distribution.fullyEnergized / totalResponses) * 100 : 0;
+                const moderatelyEnergizedWidth = totalResponses > 0 ? (distribution.moderatelyEnergized / totalResponses) * 100 : 0;
+                const somewhatEnergizedWidth = totalResponses > 0 ? (distribution.somewhatEnergized / totalResponses) * 100 : 0;
+                const fadingWidth = totalResponses > 0 ? (distribution.fading / totalResponses) * 100 : 0;
+                const burnedOutWidth = totalResponses > 0 ? (distribution.burnedOut / totalResponses) * 100 : 0;
+
+                getElement('overall-fully-energized').style.width = `${fullyEnergizedWidth}%`;
+                getElement('overall-moderately-energized').style.width = `${moderatelyEnergizedWidth}%`;
+                getElement('overall-somewhat-energized').style.width = `${somewhatEnergizedWidth}%`;
+                getElement('overall-fading').style.width = `${fadingWidth}%`;
+                getElement('overall-burned-out').style.width = `${burnedOutWidth}%`;
+
                 const averages = calculateAverages(filteredData);
                 const totalScore = averages.total;
                 const scorePosition = (totalScore / 20) * 100; // Position as a percentage of the bar
-                const scoreLine = getElement('score-line');
-                scoreLine.style.left = `${scorePosition}%`;
-                
-                // Ensure we're showing the score value
-                const scoreValue = parseFloat(totalScore).toFixed(1);
-                getElement('overall-score-marker').textContent = scoreValue;
-                // Position the score marker at the same spot as the score line
-                getElement('overall-score-marker').style.left = `${scorePosition}%`;
+                const scoreMarker = getElement('score-marker');
+                scoreMarker.style.left = `${scorePosition}%`;
+                scoreMarker.setAttribute('data-score', totalScore);
             };
 
             const displayEnergyPieChart = (data) => {
