@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Consolidated Energy Level Results</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
     <style>
         :root {
             --primary: #4f46e5;
@@ -376,17 +377,18 @@
                 const eventFilter = getElement('event-filter').value;
                 const filteredData = eventFilter ? data.filter(user => user.event === eventFilter) : data;
                 const distribution = calculateEnergyDistribution(filteredData);
+                const totalResponses = filteredData.length;
 
                 const ctx = getElement('energy-pie-chart').getContext('2d');
                 new Chart(ctx, {
                     type: 'pie',
                     data: {
                         labels: [
-                            `Fully Energized (${distribution.fullyEnergized})`,
-                            `Moderately Energized (${distribution.moderatelyEnergized})`,
-                            `Somewhat Energized (${distribution.somewhatEnergized})`,
-                            `Fading (${distribution.fading})`,
-                            `Burned Out (${distribution.burnedOut})`
+                            'Fully Energized',
+                            'Moderately Energized',
+                            'Somewhat Energized',
+                            'Fading',
+                            'Burned Out'
                         ],
                         datasets: [{
                             data: [
@@ -415,9 +417,26 @@
                             title: {
                                 display: true,
                                 text: 'Energy Level Distribution'
+                            },
+                            datalabels: {
+                                color: '#000',
+                                formatter: (value, context) => {
+                                    if (value === 0) return ''; // Hide labels for zero values
+                                    const percentage = totalResponses > 0 ? ((value / totalResponses) * 100).toFixed(1) : 0;
+                                    const label = context.chart.data.labels[context.dataIndex];
+                                    return `${label}\n${value} (${percentage}%)`;
+                                },
+                                textAlign: 'center',
+                                font: {
+                                    size: 12,
+                                    weight: 'bold'
+                                },
+                                anchor: 'center',
+                                align: 'center'
                             }
                         }
-                    }
+                    },
+                    plugins: [ChartDataLabels]
                 });
             };
 
