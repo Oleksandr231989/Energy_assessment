@@ -502,8 +502,8 @@
                                 '#dc2626'
                             ],
                             borderWidth: 1,
-                            // Make the chart a bit smaller to leave room for labels
-                            radius: '80%'
+                            // Smaller chart gives more space for labels
+                            radius: '75%'
                         }]
                     },
                     options: {
@@ -532,22 +532,46 @@
                                     size: 12,
                                     weight: 'bold'
                                 },
-                                // Position labels at 75% of the way from center to edge
-                                anchor: 'center',
+                                // Customize positioning for each section to avoid overlaps
+                                anchor: function(context) {
+                                    // Use different anchors based on the segment
+                                    const index = context.dataIndex;
+                                    const label = context.chart.data.labels[index];
+                                    
+                                    // Special handling for adjacent sections
+                                    if (label === 'Somewhat Energized') {
+                                        return 'start'; // Position toward left side of segment
+                                    } else if (label === 'Moderately Energized') {
+                                        return 'end'; // Position toward right side of segment
+                                    }
+                                    
+                                    return 'center'; // Default for other segments
+                                },
                                 align: 'center',
-                                // This offset positions labels at approximately 70% of the radius
                                 offset: function(context) {
-                                    // Get the outer radius of the chart
+                                    const index = context.dataIndex;
+                                    const label = context.chart.data.labels[index];
+                                    
+                                    // Special handling for segments that tend to overlap
+                                    if (label === 'Somewhat Energized' || label === 'Moderately Energized') {
+                                        return 10; // Less offset for these segments
+                                    }
+                                    
+                                    // For other segments, position at 70% of radius
                                     const outerRadius = context.chart.chartArea.width / 2;
-                                    // Return a value that positions the label at 70% of the radius
-                                    return outerRadius * 0.4; // 0.4 means 70% of the way from center to edge
+                                    return outerRadius * 0.35;
                                 },
                                 display: function(context) {
                                     return context.dataset.data[context.dataIndex] > 0;
                                 },
                                 clamp: true,
                                 lineHeight: 1.1,
-                                padding: 0
+                                padding: {
+                                    top: 2,
+                                    bottom: 2,
+                                    left: 2,
+                                    right: 2
+                                }
                             }
                         }
                     },
