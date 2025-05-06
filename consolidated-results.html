@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Consolidated Energy Level Results</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0/dist/chartjs-plugin-datalabels.min.js"></script>
     <style>
         :root {
             --primary: #4f46e5;
@@ -344,11 +345,11 @@
 
             const getStatusMessage = (totalScore) => {
                 const score = parseFloat(totalScore);
-                if (score >= 17) return "We are Fully energized";
-                if (score >= 13) return "We are Moderately energized";
-                if (score >= 9) return "We are Somewhat energized";
-                if (score >= 5) return "We are Fading";
-                return "We are Burned out";
+                if (score >= 17) return "Fully Energized";
+                if (score >= 13) return "Moderately Energized";
+                if (score >= 9) return "Somewhat Energized";
+                if (score >= 5) return "Fading";
+                return "Burned Out";
             };
 
             const calculateEnergyDistribution = (data) => {
@@ -369,7 +370,14 @@
                     else distribution.burnedOut++;
                 });
 
-                return distribution;
+                const total = data.length;
+                return {
+                    fullyEnergized: { count: distribution.fullyEnergized, percent: Math.round((distribution.fullyEnergized / total) * 100) },
+                    moderatelyEnergized: { count: distribution.moderatelyEnergized, percent: Math.round((distribution.moderatelyEnergized / total) * 100) },
+                    somewhatEnergized: { count: distribution.somewhatEnergized, percent: Math.round((distribution.somewhatEnergized / total) * 100) },
+                    fading: { count: distribution.fading, percent: Math.round((distribution.fading / total) * 100) },
+                    burnedOut: { count: distribution.burnedOut, percent: Math.round((distribution.burnedOut / total) * 100) }
+                };
             };
 
             const displayEnergyPieChart = (data) => {
@@ -382,19 +390,19 @@
                     type: 'pie',
                     data: {
                         labels: [
-                            `Fully Energized (${distribution.fullyEnergized})`,
-                            `Moderately Energized (${distribution.moderatelyEnergized})`,
-                            `Somewhat Energized (${distribution.somewhatEnergized})`,
-                            `Fading (${distribution.fading})`,
-                            `Burned Out (${distribution.burnedOut})`
+                            'Fully Energized',
+                            'Moderately Energized',
+                            'Somewhat Energized',
+                            'Fading',
+                            'Burned Out'
                         ],
                         datasets: [{
                             data: [
-                                distribution.fullyEnergized,
-                                distribution.moderatelyEnergized,
-                                distribution.somewhatEnergized,
-                                distribution.fading,
-                                distribution.burnedOut
+                                distribution.fullyEnergized.count,
+                                distribution.moderatelyEnergized.count,
+                                distribution.somewhatEnergized.count,
+                                distribution.fading.count,
+                                distribution.burnedOut.count
                             ],
                             backgroundColor: [
                                 '#16a34a',
@@ -410,14 +418,29 @@
                         responsive: true,
                         plugins: {
                             legend: {
-                                position: 'bottom'
+                                display: false
                             },
                             title: {
                                 display: true,
                                 text: 'Energy Level Distribution'
+                            },
+                            datalabels: {
+                                color: '#fff',
+                                font: {
+                                    weight: 'bold'
+                                },
+                                formatter: (value, ctx) => {
+                                    const label = ctx.chart.data.labels[ctx.dataIndex];
+                                    const count = distribution[label.toLowerCase().replace(' ', '')].count;
+                                    const percent = distribution[label.toLowerCase().replace(' ', '')].percent;
+                                    return `${label} (${count}, ${percent}%)`;
+                                },
+                                anchor: 'center',
+                                align: 'center'
                             }
                         }
-                    }
+                    },
+                    plugins: [ChartDataLabels]
                 });
             };
 
