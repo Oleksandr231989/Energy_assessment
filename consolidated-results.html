@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Consolidated Energy Level Results</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
             --primary: #4f46e5;
@@ -141,6 +142,11 @@
             width: 100%;
             margin-top: 0.5rem;
         }
+        .chart-container {
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+        }
 
         @media (max-width: 640px) {
             .container {
@@ -177,6 +183,9 @@
             .user-table .bar {
                 height: 12px;
             }
+            .chart-container {
+                max-width: 300px;
+            }
         }
 
         @media (max-width: 400px) {
@@ -188,6 +197,9 @@
             }
             .card {
                 padding: 0.75rem;
+            }
+            .chart-container {
+                max-width: 250px;
             }
         }
     </style>
@@ -236,6 +248,12 @@
             </div>
         </div>
         <div class="card">
+            <h2>Energy Level Distribution</h2>
+            <div class="chart-container">
+                <canvas id="energy-pie-chart"></canvas>
+            </div>
+        </div>
+        <div class="card">
             <h2>Most Energized Users</h2>
             <div class="slider-container">
                 <label for="user-count-slider">Number of users to show: <span id="slider-value">0</span></label>
@@ -260,7 +278,6 @@
 
             const fetchData = async () => {
                 try {
-                    // Use the API endpoint instead of Supabase directly
                     const response = await fetch('https://energy-assessment.vercel.app/api/get-consolidated-results');
                     
                     if (!response.ok) {
@@ -332,6 +349,76 @@
                 if (score >= 9) return "We are Somewhat energized";
                 if (score >= 5) return "We are Fading";
                 return "We are Burned out";
+            };
+
+            const calculateEnergyDistribution = (data) => {
+                const distribution = {
+                    fullyEnergized: 0,
+                    moderatelyEnergized: 0,
+                    somewhatEnergized: 0,
+                    fading: 0,
+                    burnedOut: 0
+                };
+
+                data.forEach(user => {
+                    const totalScore = calculateTotalScore(user);
+                    if (totalScore >= 17) distribution.fullyEnergized++;
+                    else if (totalScore >= 13) distribution.moderatelyEnergized++;
+                    else if (totalScore >= 9) distribution.somewhatEnergized++;
+                    else if (totalScore >= 5) distribution.fading++;
+                    else distribution.burnedOut++;
+                });
+
+                return distribution;
+            };
+
+            const displayEnergyPieChart = (data) => {
+                const eventFilter = getElement('event-filter').value;
+                const filteredData = eventFilter ? data.filter(user => user.event === eventFilter) : data;
+                const distribution = calculateEnergyDistribution(filteredData);
+
+                const ctx = getElement('energy-pie-chart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: [
+                            `Fully Energized (${distribution.fullyEnergized})`,
+                            `Moderately Energized (${distribution.moderatelyEnergized})`,
+                            `Somewhat Energized (${distribution.somewhatEnergized})`,
+                            `Fading (${distribution.fading})`,
+                            `Burned Out (${distribution.burnedOut})`
+                        ],
+                        datasets: [{
+                            data: [
+                                distribution.fullyEnergized,
+                                distribution.moderatelyEnergized,
+                                distribution.somewhatEnergized,
+                                distribution.fading,
+                                distribution.burnedOut
+                            ],
+                            backgroundColor: [
+                                '#16a34a',
+                                '#22c55e',
+                                '#86efac',
+                                '#f97316',
+                                '#dc2626'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            },
+                            title: {
+                                display: true,
+                                text: 'Energy Level Distribution'
+                            }
+                        }
+                    }
+                });
             };
 
             const updateSliderMax = (maxUsers) => {
@@ -412,10 +499,16 @@
             const data = await fetchData();
             populateEventFilter(data);
             displayAverages(data);
+            displayEnergyPieChart(data);
             displayUserTable(data);
 
             getElement('event-filter').addEventListener('change', () => {
                 displayAverages(data);
+                const existingChart = Chart.getChart('energy-pie-chart');
+                if (existingChart) {
+                    existingChart.destroy();
+                }
+                displayEnergyPieChart(data);
                 displayUserTable(data);
             });
 
