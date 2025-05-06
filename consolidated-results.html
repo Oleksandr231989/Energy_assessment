@@ -60,7 +60,8 @@
             position: relative;
         }
         .bar-label {
-            font-weight: 500;
+            font-weight: bold;
+            font-size: 1.2rem;
             margin-bottom: 0.5rem;
         }
         .bar {
@@ -174,11 +175,14 @@
         }
         .score-value {
             position: absolute;
-            top: -22px;
-            font-size: 12px;
+            top: -24px;
+            font-size: 14px;
             font-weight: bold;
             transform: translateX(-50%);
             white-space: nowrap;
+            background-color: rgba(255,255,255,0.8);
+            padding: 2px 4px;
+            border-radius: 3px;
         }
 
         @media (max-width: 640px) {
@@ -204,7 +208,7 @@
                 height: 16px;
             }
             .bar-label {
-                font-size: 0.85rem;
+                font-size: 1rem;
             }
             .combined-score-message {
                 font-size: 1.1rem;
@@ -225,8 +229,8 @@
                 width: 4.5px;
             }
             .score-value {
-                top: -18px;
-                font-size: 10px;
+                top: -20px;
+                font-size: 12px;
             }
         }
 
