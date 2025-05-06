@@ -181,16 +181,25 @@
             height: 23px;
         }
         /* Style for the score marker */
-        .score-marker {
+        .score-line {
+            position: absolute;
+            top: -4px;
+            height: 28px;
+            width: 8px;
+            background-color: #000;
+            z-index: 10;
+        }
+        
+        .score-value {
             position: absolute;
             font-weight: 700;
             font-size: 1rem;
             color: #000;
-            z-index: 20;
-            top: -22px;
+            bottom: 100%;
+            left: 50%;
             transform: translateX(-50%);
-            min-width: 20px; /* Ensure minimum width */
-            text-align: center; /* Center the text */
+            margin-bottom: 4px;
+            white-space: nowrap;
         }
 
         @media (max-width: 640px) {
@@ -285,13 +294,14 @@
                 <div class="bar-container">
                     <div class="bar-label">Overall Energy Distribution</div>
                     <div class="bar" id="overall-energy-bar">
-                        <div class="score-marker" id="overall-score-marker">0.0</div>
                         <div class="bar-fill burned-out">Burned Out</div>
                         <div class="bar-fill fading">Fading</div>
                         <div class="bar-fill somewhat-energized">Somewhat Energized</div>
                         <div class="bar-fill moderately-energized">Moderately Energized</div>
                         <div class="bar-fill fully-energized">Fully Energized</div>
-                        <div class="score-line" id="score-line" style="left: 68%"></div>
+                        <div class="score-line" id="score-line" style="left: 68%">
+                            <span class="score-value" id="overall-score-marker">0.0</span>
+                        </div>
                     </div>
                 </div>
                 <div class="bar-container">
@@ -451,25 +461,14 @@
                 const averages = calculateAverages(filteredData);
                 const totalScore = averages.total;
                 const scorePosition = (totalScore / 20) * 100; // Position as a percentage of the bar
+                
+                // Set the position of the score line
                 const scoreLine = getElement('score-line');
                 scoreLine.style.left = `${scorePosition}%`;
                 
-                // Ensure we're showing the score value
+                // Update the score value
                 const scoreValue = parseFloat(totalScore).toFixed(1);
-                const scoreMarker = getElement('overall-score-marker');
-                scoreMarker.textContent = scoreValue;
-                
-                // Position the score marker at the same spot as the score line
-                // Add special handling for scores at the edges to prevent them from being cut off
-                if (scorePosition < 5) {
-                    // For scores near the left edge
-                    scoreMarker.style.left = '5%';
-                } else if (scorePosition > 95) {
-                    // For scores near the right edge
-                    scoreMarker.style.left = '95%';
-                } else {
-                    scoreMarker.style.left = `${scorePosition}%`;
-                }
+                getElement('overall-score-marker').textContent = scoreValue;
             };
 
             const displayEnergyPieChart = (data) => {
