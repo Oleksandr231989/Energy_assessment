@@ -180,22 +180,17 @@
         #overall-energy-bar .score-line {
             height: 23px;
         }
-        /* Style for the score circle above the bar */
-        .score-circle {
+        /* Style for the score marker above the bar */
+        .score-marker {
             position: absolute;
-            width: 24px;
-            height: 24px;
-            background-color: #fff;
-            border: 2px solid #dc2626;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-weight: 600;
-            font-size: 0.75rem;
-            color: var(--dark);
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: #000;
             z-index: 20;
-            top: -12px;
+            top: -18px;
+            transform: translateX(-50%);
+            background-color: #fff;
+            padding: 0 3px;
         }
 
         @media (max-width: 640px) {
@@ -247,11 +242,9 @@
             #overall-energy-bar .score-line {
                 height: 20px;
             }
-            .score-circle {
-                width: 20px;
-                height: 20px;
-                font-size: 0.7rem;
-                top: -10px;
+            .score-marker {
+                font-size: 0.8rem;
+                top: -15px;
             }
         }
 
@@ -291,7 +284,7 @@
                 <div class="bar-container">
                     <div class="bar-label">Overall Energy Distribution</div>
                     <div class="bar" id="overall-energy-bar">
-                        <div class="score-circle" id="overall-score-circle">0</div>
+                        <div class="score-marker" id="overall-score-marker">0</div>
                         <div class="bar-fill burned-out">Burned Out</div>
                         <div class="bar-fill fading">Fading</div>
                         <div class="bar-fill somewhat-energized">Somewhat Energized</div>
@@ -460,10 +453,10 @@
                 const scoreLine = getElement('score-line');
                 scoreLine.style.left = `${scorePosition}%`;
                 
-                // Update the score circle above the bar
-                getElement('overall-score-circle').textContent = totalScore;
-                // Position the score circle at the same spot as the score line
-                getElement('overall-score-circle').style.left = `${scorePosition}%`;
+                // Update the score marker above the bar
+                getElement('overall-score-marker').textContent = totalScore;
+                // Position the score marker at the same spot as the score line
+                getElement('overall-score-marker').style.left = `${scorePosition}%`;
             };
 
             const displayEnergyPieChart = (data) => {
