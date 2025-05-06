@@ -532,32 +532,21 @@
                                     size: 12,
                                     weight: 'bold'
                                 },
-                                // Customize positioning for each section to avoid overlaps
-                                anchor: function(context) {
-                                    // Use different anchors based on the segment
-                                    const index = context.dataIndex;
-                                    const label = context.chart.data.labels[index];
-                                    
-                                    // Special handling for adjacent sections
-                                    if (label === 'Somewhat Energized') {
-                                        return 'start'; // Position toward left side of segment
-                                    } else if (label === 'Moderately Energized') {
-                                        return 'end'; // Position toward right side of segment
-                                    }
-                                    
-                                    return 'center'; // Default for other segments
-                                },
+                                // Use consistent positioning for all labels
+                                anchor: 'center',
                                 align: 'center',
+                                // Position each label in its own section with consistent approach
+                                rotation: function(context) {
+                                    // Get the angle in the middle of the slice
+                                    const data = context.chart.getDatasetMeta(0).data;
+                                    const centerAngle = (data[context.dataIndex].startAngle + data[context.dataIndex].endAngle) / 2;
+                                    
+                                    // Adjust label rotation to align with the segment radius
+                                    // This helps prevent overlaps by aligning text with segment direction
+                                    return centerAngle * (180 / Math.PI) - 90;
+                                },
                                 offset: function(context) {
-                                    const index = context.dataIndex;
-                                    const label = context.chart.data.labels[index];
-                                    
-                                    // Special handling for segments that tend to overlap
-                                    if (label === 'Somewhat Energized' || label === 'Moderately Energized') {
-                                        return 10; // Less offset for these segments
-                                    }
-                                    
-                                    // For other segments, position at 70% of radius
+                                    // Position all labels at approximately 65% of the radius
                                     const outerRadius = context.chart.chartArea.width / 2;
                                     return outerRadius * 0.35;
                                 },
@@ -566,12 +555,7 @@
                                 },
                                 clamp: true,
                                 lineHeight: 1.1,
-                                padding: {
-                                    top: 2,
-                                    bottom: 2,
-                                    left: 2,
-                                    right: 2
-                                }
+                                padding: 0
                             }
                         }
                     },
