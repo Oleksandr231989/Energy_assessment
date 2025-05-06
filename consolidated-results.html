@@ -83,7 +83,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            color: #000;
+            color: white; /* Changed text color to white */
             font-size: 12px;
             font-weight: bold;
         }
@@ -192,7 +192,7 @@
             position: absolute;
             top: -4px;
             height: 28px;
-            width: 8px;
+            width: 10px; /* Increased from 8px to 10px (25% wider) */
             background-color: #000;
             z-index: 10;
         }
@@ -326,24 +326,6 @@
             <div class="chart-container">
                 <canvas id="energy-pie-chart"></canvas>
             </div>
-        </div>
-        <div class="card">
-            <h2>Most Energized Users</h2>
-            <div class="slider-container">
-                <label for="user-count-slider">Number of users to show: <span id="slider-value">0</span></label>
-                <input type="range" id="user-count-slider" min="0" max="10" value="0">
-            </div>
-            <p>Users with the highest scores who agreed to appear on the group graph.</p>
-            <table class="user-table" id="user-table">
-                <thead>
-                    <tr>
-                        <th>Nickname</th>
-                        <th>Score (out of 20)</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-            <div id="error-message" class="error-message" style="display: none;"></div>
         </div>
     </div>
     <script>
