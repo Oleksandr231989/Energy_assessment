@@ -502,9 +502,8 @@
                                 '#dc2626'
                             ],
                             borderWidth: 1,
-                            // Add radius adjustments to make the chart slightly smaller,
-                            // creating more room for the labels
-                            radius: '90%'
+                            // Make the chart a bit smaller to leave room for labels
+                            radius: '80%'
                         }]
                     },
                     options: {
@@ -529,18 +528,30 @@
                                 },
                                 textAlign: 'center',
                                 font: {
-                                    size: 14,
+                                    size: 12, // Reduced size to better fit inside sections
                                     weight: 'bold'
                                 },
-                                anchor: 'end', // Changed from 'center' to 'end'
+                                // Position in the middle of the radius (between center and edge)
+                                anchor: 'center',
                                 align: 'center',
-                                offset: -30, // Added negative offset to pull toward the outer edge
-                                padding: 3,
+                                // Use a position between center and edge (0.5 = middle of radius)
                                 display: function(context) {
                                     return context.dataset.data[context.dataIndex] > 0;
                                 },
+                                // Make sure text doesn't exceed slice boundaries
                                 clamp: true,
-                                lineHeight: 1.2
+                                // Compact line spacing
+                                lineHeight: 1.1,
+                                padding: 0,
+                                // Limit the size of labels
+                                listeners: {
+                                    enter: function(context) {
+                                        context.element.fontSize = 13; // Slightly increase on hover
+                                    },
+                                    leave: function(context) {
+                                        context.element.fontSize = 12; // Back to normal
+                                    }
+                                }
                             }
                         }
                     },
