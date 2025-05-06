@@ -180,7 +180,7 @@
         #overall-energy-bar .score-line {
             height: 23px;
         }
-        /* Style for the score marker - just showing the number */
+        /* Style for the score marker */
         .score-marker {
             position: absolute;
             font-weight: 700;
@@ -189,6 +189,8 @@
             z-index: 20;
             top: -22px;
             transform: translateX(-50%);
+            min-width: 20px; /* Ensure minimum width */
+            text-align: center; /* Center the text */
         }
 
         @media (max-width: 640px) {
@@ -454,9 +456,20 @@
                 
                 // Ensure we're showing the score value
                 const scoreValue = parseFloat(totalScore).toFixed(1);
-                getElement('overall-score-marker').textContent = scoreValue;
+                const scoreMarker = getElement('overall-score-marker');
+                scoreMarker.textContent = scoreValue;
+                
                 // Position the score marker at the same spot as the score line
-                getElement('overall-score-marker').style.left = `${scorePosition}%`;
+                // Add special handling for scores at the edges to prevent them from being cut off
+                if (scorePosition < 5) {
+                    // For scores near the left edge
+                    scoreMarker.style.left = '5%';
+                } else if (scorePosition > 95) {
+                    // For scores near the right edge
+                    scoreMarker.style.left = '95%';
+                } else {
+                    scoreMarker.style.left = `${scorePosition}%`;
+                }
             };
 
             const displayEnergyPieChart = (data) => {
