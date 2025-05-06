@@ -100,9 +100,11 @@
         .total-score-container {
             margin-bottom: 1rem;
         }
-        .combined-score-message {
-            font-weight: bold;
-            font-size: 1.2rem;
+        .status-message {
+            font-size: 1.4rem;
+            font-weight: 900; /* Extra bold */
+            margin-bottom: 0.5rem;
+            color: var(--dark);
         }
         .score-difference-positive {
             color: var(--positive);
@@ -180,16 +182,9 @@
         #overall-energy-bar .score-line {
             height: 23px;
         }
-        /* Style for the score number */
-        .score-number {
-            position: absolute;
-            font-weight: 800;
-            font-size: 14px;
-            color: #000;
-            top: -25px;
-            z-index: 100;
-            transform: translateX(-50%);
-            text-shadow: 0px 0px 2px white;
+        /* Style for the score display in the label */
+        #overall-score-display {
+            font-weight: 700;
         }
         
         /* Style for the score line */
@@ -286,13 +281,11 @@
             </select>
         </div>
         <div class="card">
-            <h2 id="consolidated-results-title">Number of responses:</h2>
-            <div class="total-score-container">
-                <div class="combined-score-message" id="combined-score-message">We are</div>
-            </div>
+            <h2 class="status-message" id="combined-score-message">We are</h2>
+            <h3 id="consolidated-results-title">Number of responses:</h3>
             <div class="results-bars">
                 <div class="bar-container">
-                    <div class="bar-label">Overall Energy Distribution</div>
+                    <div class="bar-label">Overall Energy Distribution : <span id="overall-score-display">0.0</span></div>
                     <div class="bar" id="overall-energy-bar">
                         <div class="bar-fill burned-out">Burned Out</div>
                         <div class="bar-fill fading">Fading</div>
@@ -300,7 +293,6 @@
                         <div class="bar-fill moderately-energized">Moderately Energized</div>
                         <div class="bar-fill fully-energized">Fully Energized</div>
                         <div class="score-line" id="score-line" style="left: 68%"></div>
-                        <div class="score-number" id="score-number">0.0</div>
                     </div>
                 </div>
                 <div class="bar-container">
@@ -465,11 +457,9 @@
                 const scoreLine = getElement('score-line');
                 scoreLine.style.left = `${scorePosition}%`;
                 
-                // Update and position the score number
+                // Update the score value in the label
                 const scoreValue = parseFloat(totalScore).toFixed(1);
-                const scoreNumber = getElement('score-number');
-                scoreNumber.textContent = scoreValue;
-                scoreNumber.style.left = `${scorePosition}%`;
+                getElement('overall-score-display').textContent = scoreValue;
             };
 
             const displayEnergyPieChart = (data) => {
@@ -560,8 +550,7 @@
                 getElement('spiritual-bar').style.width = `${averages.spiritual * 20}%`;
 
                 const statusMessage = getStatusMessage(averages.total);
-                const combinedMessage = `${statusMessage}. Average Total Score: ${averages.total} (out of 20)`;
-                getElement('combined-score-message').innerHTML = combinedMessage;
+                getElement('combined-score-message').innerHTML = `${statusMessage}. Average Total Score: ${averages.total} (out of 20)`;
 
                 getElement('consolidated-results-title').textContent = `Number of responses: ${averages.responseCount}`;
             };
