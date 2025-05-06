@@ -167,10 +167,10 @@
         }
         .chart-container {
             width: 100%;
-            max-width: 450px; /* Increased from 400px */
+            max-width: 550px; /* Increased from 450px */
             margin: 0 auto;
-            height: 400px; /* Increased from 350px */
-            position: relative; /* Ensure relative positioning for absolute elements */
+            height: 500px; /* Increased from 400px */
+            position: relative;
         }
         .score-line {
             position: absolute;
@@ -502,8 +502,7 @@
                                 '#dc2626'
                             ],
                             borderWidth: 1,
-                            // Smaller chart gives more space for labels
-                            radius: '75%'
+                            radius: '85%' /* Increased from 75% */
                         }]
                     },
                     options: {
@@ -529,13 +528,11 @@
                                 },
                                 textAlign: 'center',
                                 font: {
-                                    size: 12,
+                                    size: 16, /* Increased from 12px to 16px */
                                     weight: 'bold'
                                 },
-                                // Use consistent positioning for all labels
                                 anchor: 'center',
                                 align: 'center',
-                                // No rotation - this was causing the upside-down text
                                 offset: function(context) {
                                     // Position all labels at approximately 65% of the radius
                                     const outerRadius = context.chart.chartArea.width / 2;
