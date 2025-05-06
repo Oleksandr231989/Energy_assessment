@@ -205,9 +205,10 @@
             </select>
         </div>
         <div class="card">
-            <h2 id="consolidated-results-title">Consolidated Results</h2>
+            <h2 id="consolidated-results-title">Our collective level of energy</h2>
             <div class="total-score-container">
                 <div class="combined-score-message" id="combined-score-message">We are</div>
+                <div id="response-count"></div>
             </div>
             <div class="results-bars">
                 <div class="bar-container">
@@ -239,8 +240,8 @@
         <div class="card">
             <h2>Most Energized Users</h2>
             <div class="slider-container">
-                <label for="user-count-slider">Number of users to show: <span id="slider-value">10</span></label>
-                <input type="range" id="user-count-slider" min="1" max="10" value="10">
+                <label for="user-count-slider">Number of users to show: <span id="slider-value">0</span></label>
+                <input type="range" id="user-count-slider" min="0" max="10" value="0">
             </div>
             <p>Users with the highest scores who agreed to appear on the group graph.</p>
             <table class="user-table" id="user-table">
@@ -306,7 +307,7 @@
                 data.forEach(user => {
                     const physical = (user.answer_1 || 0) + (user.answer_2 || 0) + (user.answer_3 || 0) + (user.answer_4 || 0) + (user.answer_5 || 0);
                     const emotional = (user.answer_6 || 0) + (user.answer_7 || 0) + (user.answer_8 || 0) + (user.answer_9 || 0) + (user.answer_10 || 0);
-                    const mental = (user.answer_11 || 0) + (user.answer_12 || 0) + (user.answer_13 || 0) + (user.answer_14 || 0) + (user.answer_15 || 0);
+                    const mental = (user.answer_11 || 0) + norma(user.answer_12 || 0) + (user.answer_13 || 0) + (user.answer_14 || 0) + (user.answer_15 || 0);
                     const spiritual = (user.answer_16 || 0) + (user.answer_17 || 0) + (user.answer_18 || 0) + (user.answer_19 || 0) + (user.answer_20 || 0);
 
                     physicalSum += physical;
@@ -359,8 +360,9 @@
                 const statusMessage = getStatusMessage(averages.total);
                 const combinedMessage = `${statusMessage}. Average Total Score: ${averages.total} (out of 20)`;
                 getElement('combined-score-message').innerHTML = combinedMessage;
+                getElement('response-count').textContent = `Number of responses is ${averages.responseCount}`;
 
-                getElement('consolidated-results-title').textContent = `Consolidated Results - ${averages.responseCount} responses`;
+                getElement('consolidated-results-title').textContent = `Our collective level of energy`;
             };
 
             const displayUserTable = (data) => {
@@ -428,4 +430,3 @@
     </script>
 </body>
 </html>
-```
