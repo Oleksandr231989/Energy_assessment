@@ -167,9 +167,10 @@
         }
         .chart-container {
             width: 100%;
-            max-width: 400px; /* Reduced from 600px back to 400px */
+            max-width: 450px; /* Increased from 400px */
             margin: 0 auto;
-            height: 350px; /* Reduced from 500px to 350px */
+            height: 400px; /* Increased from 350px */
+            position: relative; /* Ensure relative positioning for absolute elements */
         }
         .score-line {
             position: absolute;
@@ -468,10 +469,11 @@
                 const distribution = calculateEnergyDistribution(filteredData);
                 const totalResponses = filteredData.length;
 
-                // Increase chart size to give more room for labels
-                const chartContainer = getElement('energy-pie-chart').parentNode;
-                chartContainer.style.maxWidth = '450px'; // Increased from 400px
-                chartContainer.style.height = '400px'; // Increased from 350px
+                // Clear previous chart if it exists
+                const existingChart = Chart.getChart('energy-pie-chart');
+                if (existingChart) {
+                    existingChart.destroy();
+                }
 
                 const ctx = getElement('energy-pie-chart').getContext('2d');
                 new Chart(ctx, {
@@ -499,7 +501,10 @@
                                 '#f97316',
                                 '#dc2626'
                             ],
-                            borderWidth: 1
+                            borderWidth: 1,
+                            // Add radius adjustments to make the chart slightly smaller,
+                            // creating more room for the labels
+                            radius: '90%'
                         }]
                     },
                     options: {
@@ -524,19 +529,17 @@
                                 },
                                 textAlign: 'center',
                                 font: {
-                                    size: 14, // Adjusted size to fit better within segments
+                                    size: 14,
                                     weight: 'bold'
                                 },
-                                anchor: 'center', 
+                                anchor: 'end', // Changed from 'center' to 'end'
                                 align: 'center',
-                                padding: 3, // Reduced padding slightly
+                                offset: -30, // Added negative offset to pull toward the outer edge
+                                padding: 3,
                                 display: function(context) {
-                                    // Only display if the segment is big enough to contain text
                                     return context.dataset.data[context.dataIndex] > 0;
                                 },
-                                // Ensure labels stay within their slices
                                 clamp: true,
-                                // Add some spacing between lines
                                 lineHeight: 1.2
                             }
                         }
