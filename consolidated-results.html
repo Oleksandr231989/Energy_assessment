@@ -204,7 +204,7 @@
             </select>
         </div>
         <div class="card">
-            <h2 id="consolidated-results-title">Consolidated Results</h2>
+            <h2 id="consolidated-results-title">Number of responses:</h2>
             <div class="total-score-container">
                 <div class="combined-score-message" id="combined-score-message">We are</div>
             </div>
@@ -359,7 +359,7 @@
                 const combinedMessage = `${statusMessage}. Average Total Score: ${averages.total} (out of 20)`;
                 getElement('combined-score-message').innerHTML = combinedMessage;
 
-                getElement('consolidated-results-title').textContent = `Consolidated Results - ${averages.responseCount} responses`;
+                getElement('consolidated-results-title').textContent = `Number of responses: ${averages.responseCount}`;
             };
 
             const displayUserTable = (data) => {
