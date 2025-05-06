@@ -372,11 +372,11 @@
 
                 const total = data.length;
                 return {
-                    fullyEnergized: { count: distribution.fullyEnergized, percent: Math.round((distribution.fullyEnergized / total) * 100) },
-                    moderatelyEnergized: { count: distribution.moderatelyEnergized, percent: Math.round((distribution.moderatelyEnergized / total) * 100) },
-                    somewhatEnergized: { count: distribution.somewhatEnergized, percent: Math.round((distribution.somewhatEnergized / total) * 100) },
-                    fading: { count: distribution.fading, percent: Math.round((distribution.fading / total) * 100) },
-                    burnedOut: { count: distribution.burnedOut, percent: Math.round((distribution.burnedOut / total) * 100) }
+                    fullyEnergized: { count: distribution.fullyEnergized, percent: total > 0 ? Math.round((distribution.fullyEnergized / total) * 100) : 0 },
+                    moderatelyEnergized: { count: distribution.moderatelyEnergized, percent: total > 0 ? Math.round((distribution.moderatelyEnergized / total) * 100) : 0 },
+                    somewhatEnergized: { count: distribution.somewhatEnergized, percent: total > 0 ? Math.round((distribution.somewhatEnergized / total) * 100) : 0 },
+                    fading: { count: distribution.fading, percent: total > 0 ? Math.round((distribution.fading / total) * 100) : 0 },
+                    burnedOut: { count: distribution.burnedOut, percent: total > 0 ? Math.round((distribution.burnedOut / total) * 100) : 0 }
                 };
             };
 
@@ -385,17 +385,18 @@
                 const filteredData = eventFilter ? data.filter(user => user.event === eventFilter) : data;
                 const distribution = calculateEnergyDistribution(filteredData);
 
-                const ctx = getElement('energy-pie-chart').getContext('2d');
-                new Chart(ctx, {
+                const ctx = getElement('energy-pie-chart');
+                if (ctx) {
+                    const existingChart = Chart.getChart(ctx);
+                    if (existingChart) {
+                        existingChart.destroy();
+                    }
+                }
+
+                new Chart(getElement('energy-pie-chart'), {
                     type: 'pie',
                     data: {
-                        labels: [
-                            'Fully Energized',
-                            'Moderately Energized',
-                            'Somewhat Energized',
-                            'Fading',
-                            'Burned Out'
-                        ],
+                        labels: ['Fully Energized', 'Moderately Energized', 'Somewhat Energized', 'Fading', 'Burned Out'],
                         datasets: [{
                             data: [
                                 distribution.fullyEnergized.count,
@@ -404,13 +405,7 @@
                                 distribution.fading.count,
                                 distribution.burnedOut.count
                             ],
-                            backgroundColor: [
-                                '#16a34a',
-                                '#22c55e',
-                                '#86efac',
-                                '#f97316',
-                                '#dc2626'
-                            ],
+                            backgroundColor: ['#16a34a', '#22c55e', '#86efac', '#f97316', '#dc2626'],
                             borderWidth: 1
                         }]
                     },
@@ -520,10 +515,15 @@
             };
 
             const data = await fetchData();
-            populateEventFilter(data);
-            displayAverages(data);
-            displayEnergyPieChart(data);
-            displayUserTable(data);
+            if (data && data.length > 0) {
+                populateEventFilter(data);
+                displayAverages(data);
+                displayEnergyPieChart(data);
+                displayUserTable(data);
+            } else {
+                getElement('error-message').textContent = 'No data available.';
+                getElement('error-message').style.display = 'block';
+            }
 
             getElement('event-filter').addEventListener('change', () => {
                 displayAverages(data);
