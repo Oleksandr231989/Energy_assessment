@@ -180,7 +180,19 @@
         #overall-energy-bar .score-line {
             height: 23px;
         }
-        /* Style for the score marker */
+        /* Style for the score number */
+        .score-number {
+            position: absolute;
+            font-weight: 800;
+            font-size: 14px;
+            color: #000;
+            top: -25px;
+            z-index: 100;
+            transform: translateX(-50%);
+            text-shadow: 0px 0px 2px white;
+        }
+        
+        /* Style for the score line */
         .score-line {
             position: absolute;
             top: -4px;
@@ -188,18 +200,6 @@
             width: 8px;
             background-color: #000;
             z-index: 10;
-        }
-        
-        .score-value {
-            position: absolute;
-            font-weight: 700;
-            font-size: 1rem;
-            color: #000;
-            bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            margin-bottom: 4px;
-            white-space: nowrap;
         }
 
         @media (max-width: 640px) {
@@ -299,9 +299,8 @@
                         <div class="bar-fill somewhat-energized">Somewhat Energized</div>
                         <div class="bar-fill moderately-energized">Moderately Energized</div>
                         <div class="bar-fill fully-energized">Fully Energized</div>
-                        <div class="score-line" id="score-line" style="left: 68%">
-                            <span class="score-value" id="overall-score-marker">0.0</span>
-                        </div>
+                        <div class="score-line" id="score-line" style="left: 68%"></div>
+                        <div class="score-number" id="score-number">0.0</div>
                     </div>
                 </div>
                 <div class="bar-container">
@@ -462,13 +461,15 @@
                 const totalScore = averages.total;
                 const scorePosition = (totalScore / 20) * 100; // Position as a percentage of the bar
                 
-                // Set the position of the score line
+                // Position the score line
                 const scoreLine = getElement('score-line');
                 scoreLine.style.left = `${scorePosition}%`;
                 
-                // Update the score value
+                // Update and position the score number
                 const scoreValue = parseFloat(totalScore).toFixed(1);
-                getElement('overall-score-marker').textContent = scoreValue;
+                const scoreNumber = getElement('score-number');
+                scoreNumber.textContent = scoreValue;
+                scoreNumber.style.left = `${scorePosition}%`;
             };
 
             const displayEnergyPieChart = (data) => {
