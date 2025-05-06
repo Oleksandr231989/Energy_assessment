@@ -508,6 +508,7 @@
                     },
                     options: {
                         responsive: true,
+                        cutout: '0%', // Ensures it's a complete pie chart
                         plugins: {
                             legend: {
                                 display: false
@@ -516,7 +517,7 @@
                                 display: false
                             },
                             tooltip: {
-                                enabled: false // Disable tooltips to avoid interference with labels
+                                enabled: false
                             },
                             datalabels: {
                                 color: '#000',
@@ -528,30 +529,25 @@
                                 },
                                 textAlign: 'center',
                                 font: {
-                                    size: 12, // Reduced size to better fit inside sections
+                                    size: 12,
                                     weight: 'bold'
                                 },
-                                // Position in the middle of the radius (between center and edge)
+                                // Position labels at 75% of the way from center to edge
                                 anchor: 'center',
                                 align: 'center',
-                                // Use a position between center and edge (0.5 = middle of radius)
+                                // This offset positions labels at approximately 70% of the radius
+                                offset: function(context) {
+                                    // Get the outer radius of the chart
+                                    const outerRadius = context.chart.chartArea.width / 2;
+                                    // Return a value that positions the label at 70% of the radius
+                                    return outerRadius * 0.4; // 0.4 means 70% of the way from center to edge
+                                },
                                 display: function(context) {
                                     return context.dataset.data[context.dataIndex] > 0;
                                 },
-                                // Make sure text doesn't exceed slice boundaries
                                 clamp: true,
-                                // Compact line spacing
                                 lineHeight: 1.1,
-                                padding: 0,
-                                // Limit the size of labels
-                                listeners: {
-                                    enter: function(context) {
-                                        context.element.fontSize = 13; // Slightly increase on hover
-                                    },
-                                    leave: function(context) {
-                                        context.element.fontSize = 12; // Back to normal
-                                    }
-                                }
+                                padding: 0
                             }
                         }
                     },
