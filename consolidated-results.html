@@ -172,25 +172,23 @@
             position: absolute;
             top: -4px;
             height: 28px;
-            width: 3px; /* Thinner line */
+            width: 8px;
             background-color: #000;
             z-index: 10;
-            border-top: 5px solid black; /* Add a thicker top to point to the score */
         }
         /* Adjust the score line height for the thinner bar */
         #overall-energy-bar .score-line {
             height: 23px;
         }
-        /* Modified style for the score marker - just showing the number without a box */
+        /* Style for the score marker - just showing the number */
         .score-marker {
             position: absolute;
-            font-weight: 900; /* Extra bold */
-            font-size: 1.2rem; /* Larger text */
+            font-weight: 700;
+            font-size: 1rem;
             color: #000;
             z-index: 20;
-            top: -24px; /* Position it above the line */
+            top: -22px;
             transform: translateX(-50%);
-            text-shadow: 0px 0px 3px white; /* Text shadow to ensure visibility against any background */
         }
 
         @media (max-width: 640px) {
