@@ -289,23 +289,14 @@
         }
         .score-indicator {
             position: absolute;
-            width: 3px;
+            width: 9px; /* 3 times thicker than original */
             background-color: #2563eb;
             height: 40px;
             top: -5px;
             transform: translateX(-50%);
             z-index: 2;
         }
-        .score-indicator:after {
-            content: '';
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background-color: #2563eb;
-            bottom: -5px;
-            left: -3.5px;
-        }
+        /* Removed the :after pseudo-element that created the circle */
         
         @media (max-width: 640px) {
             .container {
