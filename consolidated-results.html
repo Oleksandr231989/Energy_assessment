@@ -584,9 +584,10 @@
                                 anchor: 'center',
                                 align: 'center',
                                 offset: function(context) {
-                                    // Position all labels at approximately 65% of the radius
+                                    // Modified this function to position labels closer to the edge of the pie
+                                    // Changed from 0.35 to 0.65 to position labels closer to the border
                                     const outerRadius = context.chart.chartArea.width / 2;
-                                    return outerRadius * 0.35;
+                                    return outerRadius * 0.65;
                                 },
                                 display: function(context) {
                                     return context.dataset.data[context.dataIndex] > 0;
