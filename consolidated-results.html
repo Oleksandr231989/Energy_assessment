@@ -314,9 +314,11 @@
             </select>
         </div>
         <div class="card">
-            <h2 class="status-message" id="combined-score-message"> </h2>
+            <h2 class="status-message" id="combined-score-message">We are</h2>
+            <h3 id="consolidated-results-title">Number of responses:</h3>
             <div class="results-bars">
                 <div class="bar-container">
+                    <div class="bar-label">Overall Energy Distribution : <span id="overall-score-display">0.0</span></div>
 <!-- New Energy Scale Structure Matching Individual Assessment -->
                 <div class="energy-scale-container">
                     <div class="energy-scale">
@@ -579,13 +581,12 @@
                                     size: 16,
                                     weight: 'bold'
                                 },
-                                anchor: 'end', // Changed from 'center' to 'end' to place text outside the pie
+                                anchor: 'center',
                                 align: 'center',
-                                // Changed the offset calculation to position labels right at the border
                                 offset: function(context) {
-                                    // Changed to position labels right at the edge of the pie
-                                    // Using a value of 0 means the text starts right at the edge of the pie slice
-                                    return 0;
+                                    // Position all labels at approximately 65% of the radius
+                                    const outerRadius = context.chart.chartArea.width / 2;
+                                    return outerRadius * 0.35;
                                 },
                                 display: function(context) {
                                     return context.dataset.data[context.dataIndex] > 0;
