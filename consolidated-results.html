@@ -71,10 +71,9 @@
             display: flex;
             position: relative;
         }
-        /* Special style for the overall energy bar - 25% thinner */
-        #overall-energy-bar {
-            height: 15px;
-        }
+        /* Removed special style for the overall energy bar */
+        /* Now all bars will use the default 20px height */
+        
         .bar-fill {
             height: 100%;
             transition: width 0.5s ease;
@@ -180,10 +179,7 @@
             background-color: #000;
             z-index: 10;
         }
-        /* Adjust the score line height for the thinner bar */
-        #overall-energy-bar .score-line {
-            height: 23px;
-        }
+        /* Removed adjustment for overall energy bar score line */
         /* Style for the score display in the label */
         #overall-score-display {
             font-weight: 700;
@@ -221,9 +217,7 @@
             .bar {
                 height: 16px;
             }
-            #overall-energy-bar {
-                height: 12px;
-            }
+            /* Removed special mobile style for overall energy bar */
             .bar-label {
                 font-size: 0.85rem;
             }
@@ -245,9 +239,7 @@
                 top: -4px;
                 width: 6px;
             }
-            #overall-energy-bar .score-line {
-                height: 20px;
-            }
+            /* Removed special mobile adjustment for overall energy bar score line */
             .score-marker {
                 font-size: 0.9rem;
                 top: -18px;
