@@ -893,7 +893,7 @@
                 getElement('total-score').innerHTML = totalScoreHTML;
 
                 const statusMessage = getStatusMessage(scores.total);
-                getElement('status-message').textContent = `YOU ARE ${statusMessage}`;
+                getElement('status-message').textContent = `LEVEL OF ENERGY: ${statusMessage}`;
 
                 // Calculate position for the score indicator (percentage based on 0-20 scale)
                 const indicatorPosition = (scores.total / 20) * 100;
