@@ -249,13 +249,26 @@
             font-size: 1.2rem;
             font-weight: bold;
         }
+        .energy-bar-container {
+            position: relative;
+            margin-top: 0.5rem;
+        }
         .energy-bar {
             height: 20px;
-            background: linear-gradient(to right, #dc2626, #f97316, #facc15, #16a34a, #065f46);
+            display: flex;
             border-radius: 4px;
             overflow: hidden;
+        }
+        .energy-section {
+            flex: 1;
+            height: 100%;
             position: relative;
         }
+        .energy-section.burned-out { background-color: #dc2626; }
+        .energy-section.fading { background-color: #f97316; }
+        .energy-section.somewhat-energized { background-color: #facc15; }
+        .energy-section.moderately-energized { background-color: #16a34a; }
+        .energy-section.fully-energized { background-color: #065f46; }
         .energy-bar-marker {
             position: absolute;
             top: -5px;
@@ -263,6 +276,16 @@
             width: 2px;
             background: #000;
             transform: translateX(-50%);
+        }
+        .energy-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+            text-align: center;
+        }
+        .energy-label {
+            flex: 1;
         }
 
         @media (max-width: 640px) {
@@ -361,6 +384,9 @@
             .energy-bar {
                 height: 16px;
             }
+            .energy-labels {
+                font-size: 0.7rem;
+            }
         }
 
         @media (max-width: 400px) {
@@ -379,6 +405,14 @@
             }
             .yes-no-toggle label {
                 width: 100%;
+            }
+            .energy-labels {
+                flex-wrap: wrap;
+            }
+            .energy-label {
+                flex: none;
+                width: 50%;
+                font-size: 0.65rem;
             }
         }
     </style>
@@ -702,8 +736,22 @@
                     <div class="total-score" id="total-score">Total Score: 0 (out of 20)</div>
                     <div class="status-message" id="status-message">YOU ARE</div>
                     <div class="energy-distribution" id="energy-distribution"></div>
-                    <div class="energy-bar">
-                        <div class="energy-bar-marker" id="energy-marker"></div>
+                    <div class="energy-bar-container">
+                        <div class="energy-bar">
+                            <div class="energy-section burned-out"></div>
+                            <div class="energy-section fading"></div>
+                            <div class="energy-section somewhat-energized"></div>
+                            <div class="energy-section moderately-energized"></div>
+                            <div class="energy-section fully-energized"></div>
+                            <div class="energy-bar-marker" id="energy-marker"></div>
+                        </div>
+                        <div class="energy-labels">
+                            <div class="energy-label">Burned Out</div>
+                            <div class="energy-label">Fading</div>
+                            <div class="energy-label">Somewhat Energized</div>
+                            <div class="energy-label">Moderately Energized</div>
+                            <div class="energy-label">Fully Energized</div>
+                        </div>
                     </div>
                 </div>
                 <div class="results-bars">
