@@ -11,8 +11,8 @@
             --secondary: #06b6d4;
             --light: #f3f4f6;
             --dark: #1f2937;
-            --positive: #16a34a;
-            --negative: #dc2626;
+            --positive: #16a34a; /* Green for positive difference */
+            --negative: #dc2626; /* Red for negative difference */
         }
         * {
             box-sizing: border-box;
@@ -234,58 +234,15 @@
             font-weight: bold;
         }
         .status-message {
-            font-size: 1.4rem;
+            font-size: 1.4rem; /* Slightly larger than total-score */
             font-weight: bold;
             margin-top: 0.5rem;
             color: #374151;
-            text-transform: uppercase;
+            text-transform: uppercase; /* Uppercase for status */
         }
         .chart-container {
             margin-top: 2rem;
             margin-bottom: 2rem;
-        }
-        .energy-distribution {
-            margin-top: 1rem;
-            font-size: 1.2rem;
-            font-weight: bold;
-        }
-        .energy-bar-container {
-            position: relative;
-            margin-top: 0.5rem;
-        }
-        .energy-bar {
-            height: 20px;
-            display: flex;
-            border-radius: 4px;
-            overflow: hidden;
-        }
-        .energy-section {
-            flex: 1;
-            height: 100%;
-            position: relative;
-        }
-        .energy-section.burned-out { background-color: #dc2626; }
-        .energy-section.fading { background-color: #f97316; }
-        .energy-section.somewhat-energized { background-color: #facc15; }
-        .energy-section.moderately-energized { background-color: #16a34a; }
-        .energy-section.fully-energized { background-color: #065f46; }
-        .energy-bar-marker {
-            position: absolute;
-            top: -5px;
-            height: 30px;
-            width: 2px;
-            background: #000;
-            transform: translateX(-50%);
-        }
-        .energy-labels {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 0.5rem;
-            font-size: 0.8rem;
-            text-align: center;
-        }
-        .energy-label {
-            flex: 1;
         }
 
         @media (max-width: 640px) {
@@ -376,16 +333,7 @@
                 font-size: 1.1rem;
             }
             .status-message {
-                font-size: 1.2rem;
-            }
-            .energy-distribution {
-                font-size: 1rem;
-            }
-            .energy-bar {
-                height: 16px;
-            }
-            .energy-labels {
-                font-size: 0.7rem;
+                font-size: 1.2rem; /* Adjust for smaller screens */
             }
         }
 
@@ -405,14 +353,6 @@
             }
             .yes-no-toggle label {
                 width: 100%;
-            }
-            .energy-labels {
-                flex-wrap: wrap;
-            }
-            .energy-label {
-                flex: none;
-                width: 50%;
-                font-size: 0.65rem;
             }
         }
     </style>
@@ -735,24 +675,7 @@
                 <div class="total-score-container">
                     <div class="total-score" id="total-score">Total Score: 0 (out of 20)</div>
                     <div class="status-message" id="status-message">YOU ARE</div>
-                    <div class="energy-distribution" id="energy-distribution"></div>
-                    <div class="energy-bar-container">
-                        <div class="energy-bar">
-                            <div class="energy-section burned-out"></div>
-                            <div class="energy-section fading"></div>
-                            <div class="energy-section somewhat-energized"></div>
-                            <div class="energy-section moderately-energized"></div>
-                            <div class="energy-section fully-energized"></div>
-                            <div class="energy-bar-marker" id="energy-marker"></div>
-                        </div>
-                        <div class="energy-labels">
-                            <div class="energy-label">Burned Out</div>
-                            <div class="energy-label">Fading</div>
-                            <div class="energy-label">Somewhat Energized</div>
-                            <div class="energy-label">Moderately Energized</div>
-                            <div class="energy-label">Fully Energized</div>
-                        </div>
-                    </div>
+                    <div class="average-score" id="average-score"></div>
                 </div>
                 <div class="results-bars">
                     <div class="bar-container">
@@ -794,6 +717,7 @@
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // Register the datalabels plugin
             Chart.register(ChartDataLabels);
             
             const categories = ['physical', 'emotional', 'mental', 'spiritual'];
@@ -887,9 +811,7 @@
                     const allEntries = previousData.concat([{ scores, created_at: new Date().toISOString() }]);
                     const totalScores = allEntries.map(entry => entry.scores.total);
                     const avgTotalScore = totalScores.reduce((sum, score) => sum + score, 0) / totalScores.length;
-                    getElement('energy-distribution').innerHTML = `Overall Energy Distribution: ${avgTotalScore.toFixed(2)}`;
-                    const markerPosition = (avgTotalScore / 20) * 100;
-                    getElement('energy-marker').style.left = `${markerPosition}%`;
+                    getElement('average-score').innerHTML = `Average Total Score: ${avgTotalScore.toFixed(2)} (out of 20)`;
 
                     const labels = allEntries.map(entry => formatDate(entry.created_at));
                     const totalScoreData = allEntries.map(entry => entry.scores.total);
@@ -1013,8 +935,7 @@
                         }
                     });
                 } else {
-                    getElement('energy-distribution').innerHTML = '';
-                    getElement('energy-marker').style.left = '0%';
+                    getElement('average-score').innerHTML = '';
                     getElement('total-score-chart').style.display = 'none';
                     getElement('section-scores-chart').style.display = 'none';
                 }
@@ -1025,9 +946,10 @@
             
             const fetchPreviousResults = async (email, currentId) => {
               try {
+                // Using absolute URL instead of relative path
                 let url = `https://energy-assessment.vercel.app/api/get-previous-results?email=${encodeURIComponent(email)}`;
                 if (currentId) {
-                  url += `¤tId=${encodeURIComponent(currentId)}`;
+                  url += `&currentId=${encodeURIComponent(currentId)}`;
                 }
                 
                 console.log("Fetching previous results from:", url);
@@ -1106,6 +1028,7 @@
                 
                 console.log("Formatted user data:", userData);
                 
+                // Using absolute URL instead of relative path
                 const response = await fetch('https://energy-assessment.vercel.app/api/save-assessment', {
                   method: 'POST',
                   headers: {
