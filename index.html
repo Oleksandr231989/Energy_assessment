@@ -11,8 +11,8 @@
             --secondary: #06b6d4;
             --light: #f3f4f6;
             --dark: #1f2937;
-            --positive: #16a34a; /* Green for positive difference */
-            --negative: #dc2626; /* Red for negative difference */
+            --positive: #16a34a;
+            --negative: #dc2626;
         }
         * {
             box-sizing: border-box;
@@ -234,15 +234,35 @@
             font-weight: bold;
         }
         .status-message {
-            font-size: 1.4rem; /* Slightly larger than total-score */
+            font-size: 1.4rem;
             font-weight: bold;
             margin-top: 0.5rem;
             color: #374151;
-            text-transform: uppercase; /* Uppercase for status */
+            text-transform: uppercase;
         }
         .chart-container {
             margin-top: 2rem;
             margin-bottom: 2rem;
+        }
+        .energy-distribution {
+            margin-top: 1rem;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        .energy-bar {
+            height: 20px;
+            background: linear-gradient(to right, #dc2626, #f97316, #facc15, #16a34a, #065f46);
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+        .energy-bar-marker {
+            position: absolute;
+            top: -5px;
+            height: 30px;
+            width: 2px;
+            background: #000;
+            transform: translateX(-50%);
         }
 
         @media (max-width: 640px) {
@@ -333,7 +353,13 @@
                 font-size: 1.1rem;
             }
             .status-message {
-                font-size: 1.2rem; /* Adjust for smaller screens */
+                font-size: 1.2rem;
+            }
+            .energy-distribution {
+                font-size: 1rem;
+            }
+            .energy-bar {
+                height: 16px;
             }
         }
 
@@ -675,7 +701,10 @@
                 <div class="total-score-container">
                     <div class="total-score" id="total-score">Total Score: 0 (out of 20)</div>
                     <div class="status-message" id="status-message">YOU ARE</div>
-                    <div class="average-score" id="average-score"></div>
+                    <div class="energy-distribution" id="energy-distribution"></div>
+                    <div class="energy-bar">
+                        <div class="energy-bar-marker" id="energy-marker"></div>
+                    </div>
                 </div>
                 <div class="results-bars">
                     <div class="bar-container">
@@ -717,7 +746,6 @@
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Register the datalabels plugin
             Chart.register(ChartDataLabels);
             
             const categories = ['physical', 'emotional', 'mental', 'spiritual'];
@@ -811,7 +839,9 @@
                     const allEntries = previousData.concat([{ scores, created_at: new Date().toISOString() }]);
                     const totalScores = allEntries.map(entry => entry.scores.total);
                     const avgTotalScore = totalScores.reduce((sum, score) => sum + score, 0) / totalScores.length;
-                    getElement('average-score').innerHTML = `Average Total Score: ${avgTotalScore.toFixed(2)} (out of 20)`;
+                    getElement('energy-distribution').innerHTML = `Overall Energy Distribution: ${avgTotalScore.toFixed(2)}`;
+                    const markerPosition = (avgTotalScore / 20) * 100;
+                    getElement('energy-marker').style.left = `${markerPosition}%`;
 
                     const labels = allEntries.map(entry => formatDate(entry.created_at));
                     const totalScoreData = allEntries.map(entry => entry.scores.total);
@@ -935,7 +965,8 @@
                         }
                     });
                 } else {
-                    getElement('average-score').innerHTML = '';
+                    getElement('energy-distribution').innerHTML = '';
+                    getElement('energy-marker').style.left = '0%';
                     getElement('total-score-chart').style.display = 'none';
                     getElement('section-scores-chart').style.display = 'none';
                 }
@@ -946,10 +977,9 @@
             
             const fetchPreviousResults = async (email, currentId) => {
               try {
-                // Using absolute URL instead of relative path
                 let url = `https://energy-assessment.vercel.app/api/get-previous-results?email=${encodeURIComponent(email)}`;
                 if (currentId) {
-                  url += `&currentId=${encodeURIComponent(currentId)}`;
+                  url += `¤tId=${encodeURIComponent(currentId)}`;
                 }
                 
                 console.log("Fetching previous results from:", url);
@@ -1028,7 +1058,6 @@
                 
                 console.log("Formatted user data:", userData);
                 
-                // Using absolute URL instead of relative path
                 const response = await fetch('https://energy-assessment.vercel.app/api/save-assessment', {
                   method: 'POST',
                   headers: {
@@ -1147,4 +1176,3 @@
     </script>
 </body>
 </html>
-```
