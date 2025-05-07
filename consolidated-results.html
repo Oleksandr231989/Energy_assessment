@@ -171,28 +171,37 @@
             height: 500px; /* Increased from 400px */
             position: relative;
         }
+        
+        /* Modified score line to match our previous implementation */
         .score-line {
             position: absolute;
             top: -4px;
-            height: 38px; /* Increased from 28px to 38px to match taller bars */
-            width: 8px;
-            background-color: #000;
+            height: 38px;
+            width: 9px; /* Thickness to match our previous implementation */
+            background-color: #2563eb; /* Blue to match our previous implementation */
             z-index: 10;
+            transform: translateX(-50%);
         }
-        /* Removed adjustment for overall energy bar score line */
+        
+        /* Added before pseudo-element for the score bubble */
+        .score-line:before {
+            content: attr(data-score);
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #2563eb;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+        
         /* Style for the score display in the label */
         #overall-score-display {
             font-weight: 700;
-        }
-        
-        /* Style for the score line */
-        .score-line {
-            position: absolute;
-            top: -4px;
-            height: 38px; /* Increased to match the taller bars */
-            width: 12px; /* Increased from 10px to 12px for better visibility */
-            background-color: #000;
-            z-index: 10;
         }
 
         @media (max-width: 640px) {
@@ -234,14 +243,11 @@
                 max-width: 300px;
             }
             .score-line {
-                height: 32px; /* Increased from 24px to 32px */
-                top: -4px;
-                width: 8px; /* Increased from 6px to 8px */
+                height: 32px;
+                width: 9px; /* Keep consistent thickness */
             }
-            .score-marker {
-                font-size: 0.9rem;
-                top: -18px;
-                /* Removed padding */
+            .score-line:before {
+                font-size: 0.8rem;
             }
         }
 
@@ -284,7 +290,7 @@
                         <div class="bar-fill somewhat-energized">Somewhat Energized</div>
                         <div class="bar-fill moderately-energized">Moderately Energized</div>
                         <div class="bar-fill fully-energized">Fully Energized</div>
-                        <div class="score-line" id="score-line" style="left: 68%"></div>
+                        <div class="score-line" id="score-line" style="left: 68%" data-score="13.6"></div>
                     </div>
                 </div>
                 <div class="bar-container">
@@ -448,9 +454,10 @@
                 const scoreLine = getElement('score-line');
                 scoreLine.style.left = `${scorePosition}%`;
                 
-                // Update the score value in the label
+                // Update the score value in the label and data attribute
                 const scoreValue = parseFloat(totalScore).toFixed(1);
                 getElement('overall-score-display').textContent = scoreValue;
+                scoreLine.setAttribute('data-score', scoreValue);
             };
 
             const displayEnergyPieChart = (data) => {
