@@ -176,7 +176,7 @@
         .score-line {
             position: absolute;
             top: -5px;
-            height: 40px; /* Extended to cross above and below the bar */
+            bottom: -5px; /* Ensure it extends below */
             width: 5px; /* Adjusted thickness */
             background-color: #2563eb; /* Blue color */
             z-index: 10;
@@ -186,7 +186,7 @@
         /* Score display as a square box on top of the line */
         .score-indicator-value {
             position: absolute;
-            top: -15px;
+            top: -25px;
             left: 50%;
             transform: translateX(-50%);
             background-color: #2563eb;
