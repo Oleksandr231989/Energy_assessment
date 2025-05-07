@@ -13,11 +13,11 @@
             --dark: #1f2937;
             --positive: #16a34a; /* Green for positive difference */
             --negative: #dc2626; /* Red for negative difference */
-            --burned-out: #dc2626; /* Red */
-            --fading: #f97316; /* Orange */
-            --somewhat: #22c55e; /* Light Green */
-            --moderately: #10b981; /* Medium Green */
-            --fully: #059669; /* Dark Green */
+            --burned-out: #dc2626; /* Red - matched from image */
+            --fading: #f97316; /* Orange - matched from image */
+            --somewhat: #4ade80; /* Light Green - matched from image */
+            --moderately: #10b981; /* Medium Green - matched from image */
+            --fully: #059669; /* Dark Green - matched from image */
         }
         * {
             box-sizing: border-box;
@@ -273,19 +273,19 @@
             font-size: 0.8rem;
         }
         .burned-out {
-            background-color: var(--burned-out);
+            background-color: #dc2626; /* Direct color from image */
         }
         .fading {
-            background-color: var(--fading);
+            background-color: #f97316; /* Direct color from image */
         }
         .somewhat {
-            background-color: var(--somewhat);
+            background-color: #4ade80; /* Direct color from image */
         }
         .moderately {
-            background-color: var(--moderately);
+            background-color: #10b981; /* Direct color from image */
         }
         .fully {
-            background-color: var(--fully);
+            background-color: #059669; /* Direct color from image */
         }
         .score-indicator {
             position: absolute;
@@ -296,7 +296,21 @@
             transform: translateX(-50%);
             z-index: 2;
         }
-        /* Removed the :after pseudo-element that created the circle */
+        
+        .score-indicator:before {
+            content: attr(data-score);
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #2563eb;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
         
         @media (max-width: 640px) {
             .container {
@@ -880,7 +894,9 @@
 
                 // Calculate position for the score indicator (percentage based on 0-20 scale)
                 const indicatorPosition = (scores.total / 20) * 100;
-                getElement('score-indicator').style.left = `${indicatorPosition}%`;
+                const scoreIndicator = getElement('score-indicator');
+                scoreIndicator.style.left = `${indicatorPosition}%`;
+                scoreIndicator.setAttribute('data-score', scores.total);
 
                 if (previousData.length > 0) {
                     const allEntries = previousData.concat([{ scores, created_at: new Date().toISOString() }]);
