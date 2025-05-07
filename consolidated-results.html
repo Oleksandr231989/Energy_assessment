@@ -492,9 +492,8 @@
                 const scoreLine = getElement('score-line');
                 scoreLine.style.left = `${scorePosition}%`;
                 
-                // Update the score value in the label and data attribute
+                // Set the score in the data attribute for the indicator
                 const scoreValue = parseFloat(totalScore).toFixed(1);
-                getElement('overall-score-display').textContent = scoreValue;
                 scoreLine.setAttribute('data-score', scoreValue);
             };
 
