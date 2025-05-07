@@ -172,32 +172,66 @@
             position: relative;
         }
         
-        /* Modified score line to match the provided images */
-        .score-line {
+        /* Score indicator styles to match individual assessment */
+        .energy-scale-container {
+            margin: 20px 0;
+            position: relative;
+        }
+        .energy-scale {
+            height: 30px;
+            width: 100%;
+            border-radius: 4px;
+            display: flex;
+            overflow: hidden;
+        }
+        .scale-section {
+            height: 100%;
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+        .burned-out {
+            background-color: #dc2626;
+        }
+        .fading {
+            background-color: #f97316;
+        }
+        .somewhat-energized {
+            background-color: #4ade80;
+        }
+        .moderately-energized {
+            background-color: #10b981;
+        }
+        .fully-energized {
+            background-color: #059669;
+        }
+        .score-indicator {
             position: absolute;
+            width: 9px;
+            background-color: #2563eb;
+            height: 40px;
             top: -5px;
-            bottom: -5px; /* Ensure it extends below */
-            width: 5px; /* Adjusted thickness */
-            background-color: #2563eb; /* Blue color */
-            z-index: 10;
             transform: translateX(-50%);
+            z-index: 2;
         }
         
-        /* Score display as a square box on top of the line */
-        .score-indicator-value {
+        .score-indicator:before {
+            content: attr(data-score);
             position: absolute;
             top: -25px;
             left: 50%;
             transform: translateX(-50%);
             background-color: #2563eb;
             color: white;
-            width: 25px;
-            height: 25px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            padding: 2px 8px;
+            border-radius: 4px;
             font-weight: bold;
             font-size: 0.9rem;
+            white-space: nowrap;
         }
         
         /* Style for the score display in the label */
@@ -285,14 +319,17 @@
             <div class="results-bars">
                 <div class="bar-container">
                     <div class="bar-label">Overall Energy Distribution : <span id="overall-score-display">0.0</span></div>
-                    <div class="bar" id="overall-energy-bar">
-                        <div class="bar-fill burned-out">Burned Out</div>
-                        <div class="bar-fill fading">Fading</div>
-                        <div class="bar-fill somewhat-energized">Somewhat Energized</div>
-                        <div class="bar-fill moderately-energized">Moderately Energized</div>
-                        <div class="bar-fill fully-energized">Fully Energized</div>
-                        <div class="score-line" id="score-line" style="left: 68%"></div>
+<!-- New Energy Scale Structure Matching Individual Assessment -->
+                <div class="energy-scale-container">
+                    <div class="energy-scale">
+                        <div class="scale-section burned-out">Burned Out</div>
+                        <div class="scale-section fading">Fading</div>
+                        <div class="scale-section somewhat-energized">Somewhat Energized</div>
+                        <div class="scale-section moderately-energized">Moderately Energized</div>
+                        <div class="scale-section fully-energized">Fully Energized</div>
                     </div>
+                    <div class="score-indicator" id="score-line" style="left: 68%"></div>
+                </div>
                 </div>
                 <div class="bar-container">
                     <div class="bar-label">Physical (Average Score: <span id="physical-score">0</span>)</div>
@@ -451,24 +488,14 @@
                 const totalScore = averages.total;
                 const scorePosition = (totalScore / 20) * 100; // Position as a percentage of the bar
                 
-                // Position the score line
+                // Position the score indicator
                 const scoreLine = getElement('score-line');
                 scoreLine.style.left = `${scorePosition}%`;
                 
-                // Update the score value in the label
+                // Update the score value in the label and data attribute
                 const scoreValue = parseFloat(totalScore).toFixed(1);
                 getElement('overall-score-display').textContent = scoreValue;
-                
-                // Update or create the score indicator value element
-                let scoreIndicator = scoreLine.querySelector('.score-indicator-value');
-                if (!scoreIndicator) {
-                    scoreIndicator = document.createElement('div');
-                    scoreIndicator.className = 'score-indicator-value';
-                    scoreLine.appendChild(scoreIndicator);
-                }
-                // For whole numbers, show as integer
-                scoreIndicator.textContent = Math.floor(scoreValue) === parseFloat(scoreValue) ? 
-                    Math.floor(scoreValue) : scoreValue;
+                scoreLine.setAttribute('data-score', scoreValue);
             };
 
             const displayEnergyPieChart = (data) => {
