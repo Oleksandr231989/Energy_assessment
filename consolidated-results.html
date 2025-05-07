@@ -453,11 +453,11 @@
 
             const getStatusMessage = (totalScore) => {
                 const score = parseFloat(totalScore);
-                if (score >= 17) return "We are Fully energized";
-                if (score >= 13) return "We are Moderately energized";
-                if (score >= 9) return "We are Somewhat energized";
-                if (score >= 5) return "We are Fading";
-                return "We are Burned out";
+                if (score >= 17) return "Level of energy: Fully energized";
+                if (score >= 13) return "Level of energy: Moderately energized";
+                if (score >= 9) return "Level of energy: Somewhat energized";
+                if (score >= 5) return "Level of energy: Fading";
+                return "Level of energy: Burned out";
             };
 
             const calculateEnergyDistribution = (data) => {
