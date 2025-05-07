@@ -623,7 +623,8 @@
                 getElement('spiritual-bar').style.width = `${averages.spiritual * 20}%`;
 
                 const statusMessage = getStatusMessage(averages.total);
-                getElement('combined-score-message').innerHTML = `${statusMessage}. Average Score: ${averages.total} (out of 20)`;
+                // MODIFIED LINE: Added inline styles to make the text more compact
+                getElement('combined-score-message').innerHTML = `<span style="letter-spacing:-0.5px;word-spacing:-2px;white-space:nowrap;">${statusMessage}. Average Score: ${averages.total} (out of 20)</span>`;
 
                 getElement('consolidated-results-title').textContent = `Number of responses: ${averages.responseCount}`;
             };
