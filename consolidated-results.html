@@ -581,13 +581,13 @@
                                     size: 16,
                                     weight: 'bold'
                                 },
-                                anchor: 'center',
+                                anchor: 'end', // Changed from 'center' to 'end' to place text outside the pie
                                 align: 'center',
+                                // Changed the offset calculation to position labels right at the border
                                 offset: function(context) {
-                                    // Modified this function to position labels closer to the edge of the pie
-                                    // Changed from 0.35 to 0.65 to position labels closer to the border
-                                    const outerRadius = context.chart.chartArea.width / 2;
-                                    return outerRadius * 0.65;
+                                    // Changed to position labels right at the edge of the pie
+                                    // Using a value of 0 means the text starts right at the edge of the pie slice
+                                    return 0;
                                 },
                                 display: function(context) {
                                     return context.dataset.data[context.dataIndex] > 0;
