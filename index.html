@@ -13,6 +13,11 @@
             --dark: #1f2937;
             --positive: #16a34a; /* Green for positive difference */
             --negative: #dc2626; /* Red for negative difference */
+            --burned-out: #dc2626; /* Red */
+            --fading: #f97316; /* Orange */
+            --somewhat: #22c55e; /* Light Green */
+            --moderately: #10b981; /* Medium Green */
+            --fully: #059669; /* Dark Green */
         }
         * {
             box-sizing: border-box;
@@ -244,7 +249,64 @@
             margin-top: 2rem;
             margin-bottom: 2rem;
         }
-
+        
+        /* New styles for the energy scale */
+        .energy-scale-container {
+            margin: 20px 0;
+            position: relative;
+        }
+        .energy-scale {
+            height: 30px;
+            width: 100%;
+            border-radius: 4px;
+            display: flex;
+            overflow: hidden;
+        }
+        .scale-section {
+            height: 100%;
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+        .burned-out {
+            background-color: var(--burned-out);
+        }
+        .fading {
+            background-color: var(--fading);
+        }
+        .somewhat {
+            background-color: var(--somewhat);
+        }
+        .moderately {
+            background-color: var(--moderately);
+        }
+        .fully {
+            background-color: var(--fully);
+        }
+        .score-indicator {
+            position: absolute;
+            width: 3px;
+            background-color: #2563eb;
+            height: 40px;
+            top: -5px;
+            transform: translateX(-50%);
+            z-index: 2;
+        }
+        .score-indicator:after {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #2563eb;
+            bottom: -5px;
+            left: -3.5px;
+        }
+        
         @media (max-width: 640px) {
             .container {
                 padding: 0.5rem;
@@ -335,6 +397,9 @@
             .status-message {
                 font-size: 1.2rem; /* Adjust for smaller screens */
             }
+            .scale-section {
+                font-size: 0.7rem;
+            }
         }
 
         @media (max-width: 400px) {
@@ -353,6 +418,9 @@
             }
             .yes-no-toggle label {
                 width: 100%;
+            }
+            .scale-section {
+                font-size: 0.6rem;
             }
         }
     </style>
@@ -675,8 +743,20 @@
                 <div class="total-score-container">
                     <div class="total-score" id="total-score">Total Score: 0 (out of 20)</div>
                     <div class="status-message" id="status-message">YOU ARE</div>
-                    <div class="average-score" id="average-score"></div>
                 </div>
+                
+                <!-- New Energy Scale -->
+                <div class="energy-scale-container">
+                    <div class="energy-scale">
+                        <div class="scale-section burned-out">Burned Out</div>
+                        <div class="scale-section fading">Fading</div>
+                        <div class="scale-section somewhat">Somewhat Energized</div>
+                        <div class="scale-section moderately">Moderately Energized</div>
+                        <div class="scale-section fully">Fully Energized</div>
+                    </div>
+                    <div class="score-indicator" id="score-indicator" style="left: 0%"></div>
+                </div>
+                
                 <div class="results-bars">
                     <div class="bar-container">
                         <div class="bar-label">Physical (Score: <span id="physical-score">0</span>)</div>
@@ -807,12 +887,12 @@
                 const statusMessage = getStatusMessage(scores.total);
                 getElement('status-message').textContent = `YOU ARE ${statusMessage}`;
 
+                // Calculate position for the score indicator (percentage based on 0-20 scale)
+                const indicatorPosition = (scores.total / 20) * 100;
+                getElement('score-indicator').style.left = `${indicatorPosition}%`;
+
                 if (previousData.length > 0) {
                     const allEntries = previousData.concat([{ scores, created_at: new Date().toISOString() }]);
-                    const totalScores = allEntries.map(entry => entry.scores.total);
-                    const avgTotalScore = totalScores.reduce((sum, score) => sum + score, 0) / totalScores.length;
-                    getElement('average-score').innerHTML = `Average Total Score: ${avgTotalScore.toFixed(2)} (out of 20)`;
-
                     const labels = allEntries.map(entry => formatDate(entry.created_at));
                     const totalScoreData = allEntries.map(entry => entry.scores.total);
                     const physicalData = allEntries.map(entry => entry.scores.physical);
@@ -935,7 +1015,6 @@
                         }
                     });
                 } else {
-                    getElement('average-score').innerHTML = '';
                     getElement('total-score-chart').style.display = 'none';
                     getElement('section-scores-chart').style.display = 'none';
                 }
