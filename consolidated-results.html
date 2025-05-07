@@ -183,11 +183,12 @@
             transform: translateX(-50%);
         }
         
-        /* Score display as a square box to the right of the line */
+        /* Score display as a square box on top of the line */
         .score-indicator-value {
             position: absolute;
-            top: -10px;
-            right: -25px;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
             background-color: #2563eb;
             color: white;
             width: 25px;
@@ -197,7 +198,6 @@
             align-items: center;
             font-weight: bold;
             font-size: 0.9rem;
-            border-radius: 3px;
         }
         
         /* Style for the score display in the label */
